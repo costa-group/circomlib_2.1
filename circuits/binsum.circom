@@ -74,8 +74,8 @@ function nbits(a) {
 
 template BinSum(n, ops) {
     var nout = nbits((2**n -1)*ops);
-    signal input {binary} in[ops][n];
-    signal output {binary} out[nout];
+    BinaryNumber(n) input in[ops];
+    BinaryNumber(nout) output out;
 
     var lin = 0;
     var lout = 0;
@@ -88,19 +88,19 @@ template BinSum(n, ops) {
     e2 = 1;
     for (k=0; k<n; k++) {
         for (j=0; j<ops; j++) {
-            lin += in[j][k] * e2;
+            lin += in[j].bits[k] * e2;
         }
         e2 = e2 + e2;
     }
 
     e2 = 1;
     for (k=0; k<nout; k++) {
-        out[k] <-- (lin >> k) & 1;
+        out.bits[k] <-- (lin >> k) & 1;
 
         // Ensure out is binary
-        out[k] * (out[k] - 1) === 0;
+        out.bits[k] * (out.bits[k] - 1) === 0;
 
-        lout += out[k] * e2;
+        lout += out.bits[k] * e2;
 
         e2 = e2+e2;
     }

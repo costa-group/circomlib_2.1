@@ -19,6 +19,7 @@
 pragma circom 2.1.5;
 
 include "comparators.circom";
+include "buses.circom";
 
 // The templates and functions of this file only work for prime field bn128 (21888242871839275222246405745257275088548364400416034343698204186575808495617)
 
@@ -36,11 +37,11 @@ include "comparators.circom";
 
 template AliasCheck() {
 
-    signal input {binary} in[254];
+    BinaryNumber(254) input in;
 
     component  compConstant = CompConstant(-1);
 
-    for (var i=0; i<254; i++) in[i] ==> compConstant.in[i];
+    compConstant.in <== in;
 
     compConstant.out === 0;
 }

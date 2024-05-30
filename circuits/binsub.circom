@@ -53,8 +53,8 @@ pragma circom 2.1.5;
 
 
 template BinSub(n) {
-    signal input {binary} in[2][n];
-    signal output {binary} out[n];
+    BinaryNumber(n) input in[2];
+    BinaryNumber(n) output {binary} out;
 
     signal aux;
 
@@ -64,17 +64,17 @@ template BinSub(n) {
     var i;
 
     for (i=0; i<n; i++) {
-        lin = lin + in[0][i]*(2**i);
-        lin = lin - in[1][i]*(2**i);
+        lin = lin + in[0].bits[i]*(2**i);
+        lin = lin - in[1].bits[i]*(2**i);
     }
 
     for (i=0; i<n; i++) {
-        out[i] <-- (lin >> i) & 1;
+        out.bits[i] <-- (lin >> i) & 1;
 
         // Ensure out is binary
-        out[i] * (out[i] - 1) === 0;
+        out.bits[i] * (out.bits[i] - 1) === 0;
 
-        lout = lout + out[i]*(2**i);
+        lout = lout + out.bits[i]*(2**i);
     }
 
     aux <-- (lin >> n) & 1;

@@ -21,6 +21,7 @@ pragma circom 2.1.5;
 include "bitify.circom";
 include "binsum.circom";
 include "gates.circom";
+include "buses.circom";
 
 
 /*
@@ -116,7 +117,7 @@ template LessThan(n) {
 
     n2b.in <== in[0]+ (1<<n) - in[1];
 
-    out <== 1-n2b.out[n];
+    out <== 1-n2b.out.bits[n];
 }
 
 
@@ -213,16 +214,14 @@ template GreaterEqThan(n) {
 */
 
 template Sign() {
-    signal input {binary} in[254];
+    BinaryNumber(254) input in;
     signal output {binary} sign;
 
     component comp = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
 
     var i;
-
-    for (i=0; i<254; i++) {
-        comp.in[i] <== in[i];
-    }
+    
+    comp.in <== in;
 
     sign <== comp.out;
 }
@@ -241,7 +240,7 @@ template Sign() {
 */
 
 template CompConstant(ct) {
-    signal input {binary} in[254];
+    BinaryNumber(254) input in;
     signal output {binary} out;
 
     signal parts[127];
@@ -262,8 +261,8 @@ template CompConstant(ct) {
     for (i=0;i<127; i++) {
         clsb = (ct >> (i*2)) & 1;
         cmsb = (ct >> (i*2+1)) & 1;
-        slsb = in[i*2];
-        smsb = in[i*2+1];
+        slsb = in.bits[i*2];
+        smsb = in.bits[i*2+1];
 
         if ((cmsb==0)&&(clsb==0)) {
             parts[i] <== -b*smsb*slsb + b*smsb + b*slsb;
@@ -288,61 +287,6 @@ template CompConstant(ct) {
 
     num2bits.in <== sout;
 
-    out <== num2bits.out[127];
+    out <== num2bits.out.bits[127];
 }
 
-/*
-*** MaxValueCheck(ct): template that receives an input, checks its value is smaller than or equal to the constant value ct given as a parameter, and returns the same input but with the tag maxvalue with value ct 
-        - Inputs: in -> field number
-        - Outputs: out -> field number 
-                          satisfies tag maxvalue with value ct
-*/
-
-template MaxValueCheck(ct){
-    signal input in;
-    signal output {maxvalue} out;
-
-    signal res <== CompConstant(ct)(Num2Bits(254)(in));
-    res === 0;
-    out.maxvalue = ct;
-    out <== in;
-}
-
-/*
-*** MinValueCheck(ct): template that receives an input, checks its value is greater than or equal to the constant value ct given as a parameter, and returns the same input but with the tag minvalue with value ct 
-        - Inputs: in -> field number
-        - Outputs: out -> field number 
-                          satisfies tag minvalue with value ct
-*/
-
-template MinValueCheck(ct){
-    signal input in;
-    signal output {minvalue} out;
-
-    signal res <== CompConstant(ct-1)(Num2Bits(254)(in));
-    res === 1;
-    out.minvalue = ct;
-    out <== in;
-}
-
-/*
-*** MinMaxValueCheck(ct): template that receives an input, checks its value is greater than or equal to the constant value ct1 given as a first parameter and smaller than or equal to the constant value ct2 given as a second parameter, and returns the same input but with the tag minvalue with value ct1 and the tag maxvalue with value ct2 
-        - Inputs: in -> field number
-        - Outputs: out -> field number 
-                          satisfies tag minvalue with value ct1
-                          satisfies tag maxvalue with value ct2
-*/
-
-template MinMaxValueCheck(ct1,ct2){
-    signal input in;
-    signal output {minvalue,maxvalue} out;
-    
-    signal inb[254] <== Num2Bits(254)(in);
-    signal res1 <== CompConstant(ct1-1)(inb);
-    res1 === 1;
-    out.minvalue = ct1;
-    signal res2 <== CompConstant(ct2)(inb);
-    res2 === 0;    
-    out.maxvalue = ct2;
-    out <== in;
-}

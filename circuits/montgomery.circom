@@ -19,111 +19,146 @@
  
  pragma circom 2.1.5;
  
- // The templates and functions of this file only work for prime field bn128 (21888242871839275222246405745257275088548364400416034343698204186575808495617)
+include "buses.circom";
  
+// The templates and functions of this file only work for finite field F_p = bn128,
+// with the prime number p = 21888242871839275222246405745257275088548364400416034343698204186575808495617. 
 
 /*
     Source: https://en.wikipedia.org/wiki/Montgomery_curve
 
- */
-
+*/
 
 /*
-*** Edwards2Montgomery(): template that receives an input in representing a point of an elliptic curve in Edwards form and returns the equivalent point in Montgomery form
-        - Inputs: in[2] -> array of 2 field values representing a point of the curve in Edwards form
-        - Outputs: out[2] -> array of 2 field values representing a point of the curve in Montgomery form
-         
-    Example: if we consider the input in = [x, y], then the circuit produces the following output [u, v]
+    The Baby-Jubjub Montgomery elliptic curve defined over the finite field bn128 is given by the equation
+
+    B*v^2 = u^3 + A*u^2 + u, A = 168698, B = 1
+
+    This curve is birationally equivalent to the twisted Edwards elliptic curve
+
+    a*x^2 + y^2 = 1 + d*x^2*y^2, a = 168700 = (A+2)/B, d = 168696 = (A-2)/B
+
+                                    u     u-1                                     1+y       1+y
+    via the map (u,v) -> (x,y) = [ --- , ----- ] with inverse (x,y) -> (u,v) = [ ----- , --------- ]
+                                    v     u+1                                     1-y     (1-y)*x
+
+    Since a is not a square in bn128, the twisted Edwards curve is a quadratic twist of the Edwards curve
     
-                1 + y       1 + y
-    [u, v] = [ -------  , ---------- ]
-                1 - y      (1 - y)x
+    x'^2 + y'^2 = 1 + d'*x'^2*y'^2
+
+    via the map (x,y) -> (x',y') = [ sqrt(a)*x , y ]
+
+    where d' = 9706598848417545097372247223557719406784115219466060233080913168975159366771.
+    Here circuits are provided to transform a point of the Baby-Jubjub curve in twisted Edwards to its Montgomery form and vice versa.
+    Circuits to add and double points of the Baby-Jubjub Montgomery curve are provided as well.
+*/
+
+/*
+    spec tag babyedwards: 168700*(p.x)^2 + (p.y)^2 = 1 + 168696*(p.x)^2*(p.y)^2
+    spec tag babymontgomery: (p.y)^2 = (p.x)^3 + 168698*(p.x)^2 + p.x
+*/
+
+/*
+*** Edwards2Montgomery(): template that receives a point of the Baby-Jubjub curve in twisted Edwards form
+                          and returns the equivalent point in Montgomery form.
+        - Inputs: pin -> bus representing a point of the Baby-Jubjub curve in twisted Edwards form
+        - Outputs: pout -> bus representing a point of the Baby-Jubjub curve in Montgomery form
+         
+    Map from twisted Edwards elliptic curve to its birationally equivalent Montgomery curve:
+    
+                          1 + y        1 + y
+    (x, y) -> (u, v) = [ -------  , ----------- ]
+                          1 - y      (1 - y)*x
     
 */
 
 template Edwards2Montgomery() {
-    signal input in[2];
-    signal output out[2];
+    Point input {babyedwards} pin;
+    Point output {babymontgomery} pout;
 
-    out[0] <-- (1 + in[1]) / (1 - in[1]);
-    out[1] <-- out[0] / in[0];
+    pout.x <-- (1 + pin.y) / (1 - pin.y);
+    pout.y <-- pout.x / pin.x;
 
-
-    out[0] * (1-in[1]) === (1 + in[1]);
-    out[1] * in[0] === out[0];
+    pout.x * (1 - pin.y) === (1 + pin.y);
+    pout.y * pin.x === pout.x;
 }
 
 /*
-*** Montgomery2Edwards(): template that receives an input in representing a point of an elliptic curve in Montgomery form and returns the equivalent point in Edwards form
-        - Inputs: in[2] -> array of 2 field values representing a point of the curve in Montgomery form
-        - Outputs: out[2] -> array of 2 field values representing a point of the curve in Edwards form
+*** Montgomery2Edwards(): template that receives an input pin representing a point of the Baby-Jubjub curve in Montgomery form
+                          and returns the equivalent point in twisted Edwards form.
+        - Inputs: pin -> bus representing a point of the Baby-Jubjub curve in Montgomery form
+        - Outputs: pout -> bus representing a point of the curve Baby-Jubjub in twisted Edwards form
          
-    Example: if we consider the input in = [u, v], then the circuit produces the following output [x, y]
+    Map from Montgomery elliptic curve to its birationally equivalent twisted Edwards curve:
     
-                u    u - 1
-    [x, y] = [ ---, ------- ]
-                v    u + 1
+                          u    u - 1
+    (u, v) -> (x, y) = [ ---, ------- ]
+                          v    u + 1
 
  */
 
 template Montgomery2Edwards() {
-    signal input in[2];
-    signal output out[2];
+    Point input {babymontgomery} pin;
+    Point output {babyedwards} pout;
 
-    out[0] <-- in[0] / in[1];
-    out[1] <-- (in[0] - 1) / (in[0] + 1);
+    pout.x <-- pin.x / pin.y;
+    pout.y <-- (pin.x - 1) / (pin.x + 1);
 
-    out[0] * in[1] === in[0];
-    out[1] * (in[0] + 1) === in[0] - 1;
+    pout.x * pin.y === pin.x;
+    pout.y * (pin.x + 1) === pin.x - 1;
 }
 
 
 /*
-*** MontgomeryAdd(): template that receives two inputs in1, in2 representing points of the Baby Jubjub curve in Montgomery form and returns the addition of the points
-        - Inputs: in1[2] -> array of 2 field values representing a point of the curve in Montgomery form
-                  in2[2] -> array of 2 field values representing a point of the curve in Montgomery form
-        - Outputs: out[2] -> array of 2 field values representing the point in1 + in2 in Montgomery form
+*** MontgomeryAdd(): template that receives two inputs pin1, pin2 representing points of the Baby-Jubjub curve in Montgomery form
+                     and returns the addition of the points.
+        - Inputs: pin1 -> bus representing a point of the Baby-Jubjub curve in Montgomery form
+                  pin2 -> bus representing a point of the Baby-Jubjub curve in Montgomery form
+        - Outputs: pout -> bus representing the point pin1 + pin2 of the Baby-Jubjub curve in Montgomery form
          
-    Example: if we consider the inputs in1 = [x1, y1] and in2 = [x2, y2], then the circuit produces the following output [x3, y3]:
+    Montgomery Addition Law:
+
+                                            y2 - y1                        y2 - y1                           y2 - y1
+    [x3, y3] = [x1, y1] + [x2, y2] = [ B*( --------- )^2 - A - x1 - x2, ( --------- )*(A + 2*x1 + x2) - B*( --------- )^3 - y1 ]
+                                            x2 - x1                        x2 - x1                           x2 - x1
 
              y2 - y1
     lamda = ---------
              x2 - x1
 
-    x3 = B * lamda^2 - A - x1 -x2
+    x3 = B*lamda^2 - A - x1 -x2
 
-    y3 = lamda * ( x1 - x3 ) - y1
-    
-    where A and B are two constants defined below. 
- */
+    y3 = lamda*( x1 - x3 ) - y1
+*/
 
 template MontgomeryAdd() {
-    signal input in1[2];
-    signal input in2[2];
-    signal output out[2];
+    Point input {babymontgomery} pin1, pin2;
+    Point output {babymontgomery} pout;
 
-    var a = 168700;
-    var d = 168696;
-
-    var A = (2 * (a + d)) / (a - d);
-    var B = 4 / (a - d);
+    var A = 168698;
+    var B = 1;
 
     signal lamda;
 
-    lamda <-- (in2[1] - in1[1]) / (in2[0] - in1[0]);
-    lamda * (in2[0] - in1[0]) === (in2[1] - in1[1]);
+    lamda <-- (pin2.y - pin1.y) / (pin2.x - pin1.x);
+    lamda * (pin2.x - pin1.x) === pin2.y - pin1.y;
 
-    out[0] <== B*lamda*lamda - A - in1[0] -in2[0];
-    out[1] <== lamda * (in1[0] - out[0]) - in1[1];
+    pout.x <== B*lamda*lamda - A - pin1.x - pin2.x;
+    pout.y <== lamda * (pin1.x - pout.x) - pin1.y;
 }
 
 /*
-*** MontgomeryDouble(): template that receives an input in representing a point of the Baby Jubjub curve in Montgomery form and returns the point 2 * in
-        - Inputs: in[2] -> array of 2 field values representing a point of the curve in Montgomery form
-        - Outputs: out[2] -> array of 2 field values representing the point 2*in in Montgomery form
+*** MontgomeryDouble(): template that receives an input pin representing a point of the Baby-Jubjub curve in Montgomery form
+                        and returns the point 2 * pin.
+        - Inputs: pin -> bus representing a point of the Baby-Jubjub curve in Montgomery form
+        - Outputs: pout -> bus representing the point 2*pin of the Baby-Jubjub curve in Montgomery form
          
          
-    Example: if we consider the input in = [x1, y1], then the circuit produces the following output [x3, y3]:
+    Montgomery Doubling Law:
+
+                                   3*x1^2 + 2*A*x1 + 1                        3*x1^2 + 2*A*x1 + 1                           3*x1^2 + 2*A*x1 + 1
+    [x2, y2] = 2*[x1, y1] = [ B*( --------------------- )^2 - A - x1 - x2, ( --------------------- )*(A + 2*x1 + x2) - B*( --------------------- )^3 - y1 ]
+                                         2*B*y1                                     2*B*y1                                        2*B*y1
 
     x1_2 = x1*x1
 
@@ -131,30 +166,44 @@ template MontgomeryAdd() {
     lamda = ---------------------
                    2*B*y1
 
-    x3 = B * lamda^2 - A - x1 -x1
+    x2 = B*lamda^2 - A - x1 -x1
 
-    y3 = lamda * ( x1 - x3 ) - y1
+    y2 = lamda*( x1 - x2 ) - y1
 
  */
  
 template MontgomeryDouble() {
-    signal input in[2];
-    signal output out[2];
+    Point input {babymontgomery} pin;
+    Point output {babymontgomery} pout;
 
-    var a = 168700;
-    var d = 168696;
-
-    var A = (2 * (a + d)) / (a - d);
-    var B = 4 / (a - d);
+    var A = 168698;
+    var B = 1;
 
     signal lamda;
     signal x1_2;
 
-    x1_2 <== in[0] * in[0];
+    x1_2 <== pin.x * pin.x;
 
-    lamda <-- (3*x1_2 + 2*A*in[0] + 1 ) / (2*B*in[1]);
-    lamda * (2*B*in[1]) === (3*x1_2 + 2*A*in[0] + 1 );
+    lamda <-- (3*x1_2 + 2*A*pin.x + 1) / (2*B*pin.y);
+    lamda * (2*B*pin.y) === (3*x1_2 + 2*A*pin.x + 1);
 
-    out[0] <== B*lamda*lamda - A - 2*in[0];
-    out[1] <== lamda * (in[0] - out[0]) - in[1];
+    pout.x <== B*lamda*lamda - A - 2*pin.x;
+    pout.y <== lamda * (pin.x - pout.x) - pin.y;
+}
+
+
+
+template MontgomeryBabyCheck(){
+    Point input pin;
+    Point output {babymontgomery} pout;
+    
+    var A = 168698;
+    
+    signal x_2 <== pin.x * pin.x;
+    signal y_2 <== pin.y * pin.y;
+    
+    y_2 === x_2 * pin.x + A * x_2 + pin.x; 
+    
+    pin ==> pout;
+
 }

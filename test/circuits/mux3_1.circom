@@ -19,7 +19,6 @@ template Constants() {
 }
 
 template Main() {
-    var i;
     signal input selector;//private
     signal output out;
 
@@ -28,12 +27,8 @@ template Main() {
     component cst = Constants();
 
     selector ==> n2b.in;
-    for (i=0; i<3; i++) {
-        n2b.out[i] ==> mux.s[i];
-    }
-    for (i=0; i<8; i++) {
-        cst.out[i] ==> mux.c[i];
-    }
+    n2b.out.bits ==> mux.s;
+    cst.out ==> mux.c;
 
     mux.out ==> out;
 }

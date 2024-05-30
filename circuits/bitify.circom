@@ -20,6 +20,7 @@ pragma circom 2.1.5;
 
 include "comparators.circom";
 include "aliascheck.circom";
+include "buses.circom";
 
 
 /*
@@ -36,14 +37,14 @@ include "aliascheck.circom";
 
 template Num2Bits(n) {
     signal input in;
-    signal output {binary} out[n];
+    BinaryNumber(n) output out;
     var lc1=0;
 
     var e2=1;
     for (var i = 0; i<n; i++) {
-        out[i] <-- (in >> i) & 1;
-        out[i] * (out[i] -1 ) === 0;
-        lc1 += out[i] * e2;
+        out.bits[i] <-- (in >> i) & 1;
+        out.bits[i] * (out.bits[i] -1 ) === 0;
+        lc1 += out.bits[i] * e2;
         e2 = e2+e2;
     }
     
@@ -63,16 +64,14 @@ template Num2Bits(n) {
 
 template Num2Bits_strict() {
     signal input in;
-    signal output {binary} out[254];
+    BinaryNumber(254) output out;
 
     component aliasCheck = AliasCheck();
     component n2b = Num2Bits(254);
     in ==> n2b.in;
 
-    for (var i=0; i<254; i++) {
-        n2b.out[i] ==> out[i];
-        n2b.out[i] ==> aliasCheck.in[i];
-    }
+    n2b.out ==> out;
+    n2b.out ==> aliasCheck.in;
 }
 
 /*
@@ -89,13 +88,13 @@ template Num2Bits_strict() {
 
 
 template Bits2Num(n) {
-    signal input {binary} in[n];
+    BinaryNumber(n) input in;
     signal output {maxbit} out;
     var lc1=0;
 
     var e2 = 1;
     for (var i = 0; i<n; i++) {
-        lc1 += in[i] * e2;
+        lc1 += in.bits[i] * e2;
         e2 = e2 + e2;
     }
     out.maxbit = n;
@@ -116,16 +115,15 @@ template Bits2Num(n) {
 */
 
 template Bits2Num_strict() {
-    signal input {binary} in[254];
+    BinaryNumber(254) input in;
     signal output {maxbit} out;
 
     component aliasCheck = AliasCheck();
     component b2n = Bits2Num(254);
+    
+    in ==> b2n.in;
+    in ==> aliasCheck.in;
 
-    for (var i=0; i<254; i++) {
-        in[i] ==> b2n.in[i];
-        in[i] ==> aliasCheck.in[i];
-    }
     out.maxbit = 254;
     b2n.out ==> out;
 }
@@ -143,7 +141,7 @@ template Bits2Num_strict() {
 
 template Num2BitsNeg(n) {
     signal input in;
-    signal output {binary} out[n];
+    BinaryNumber(n) output out;
     var lc1=0;
 
     component isZero;
@@ -153,9 +151,9 @@ template Num2BitsNeg(n) {
     var neg = n == 0 ? 0 : 2**n - in;
 
     for (var i = 0; i<n; i++) {
-        out[i] <-- (neg >> i) & 1;
-        out[i] * (out[i] -1 ) === 0;
-        lc1 += out[i] * 2**i;
+        out.bits[i] <-- (neg >> i) & 1;
+        out.bits[i] * (out.bits[i] -1 ) === 0;
+        lc1 += out.bits[i] * 2**i;
     }
 
     in ==> isZero.in;
