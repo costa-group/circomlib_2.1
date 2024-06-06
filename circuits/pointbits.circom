@@ -24,7 +24,7 @@ include "bitify.circom";
 include "aliascheck.circom";
 include "comparators.circom";
 include "babyjub.circom";
-
+include "buses.circom";
 
 /*
 
@@ -93,53 +93,43 @@ function sqrt(n) {
 
 
 template Bits2Point_Strict() {
-    signal input {binary} in[256];
-    signal output out[2];
+    BinaryPoint(254) input in;
+    Point output pout;
 
     var i;
 
     // Check aliasing
     component aliasCheckY = AliasCheck();
-    for (i=0; i<254; i++) {
-        aliasCheckY.in[i] <== in[i];
-    }
-    in[254] === 0;
+    aliasCheckY.in <== in.binY;
 
     component b2nY = Bits2Num(254);
-    for (i=0; i<254; i++) {
-        b2nY.in[i] <== in[i];
-    }
+    b2nY.in <== in.binY;
 
-    out[1] <== b2nY.out;
+    pout.y <== b2nY.out;
 
     var a = 168700;
     var d = 168696;
 
-    var y2 = out[1] * out[1];
+    var y2 = pout.y * pout.y;
 
     var x = sqrt(   (1-y2)/(a - d*y2)  );
 
-    if (in[255] == 1) x = -x;
+    if (in.signX == 1) x = -x;
 
-    out[0] <-- x;
+    pout.x <-- x;
 
     component babyCheck = BabyCheck();
-    babyCheck.x <== out[0];
-    babyCheck.y <== out[1];
+    babyCheck.pin <== pout;
 
     component n2bX = Num2Bits(254);
-    n2bX.in <== out[0];
+    n2bX.in <== pout.x;
     component aliasCheckX = AliasCheck();
-    for (i=0; i<254; i++) {
-        aliasCheckX.in[i] <== n2bX.out[i];
-    }
+    aliasCheckX.in <== n2bX.out;
 
     component signCalc = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
-    for (i=0; i<254; i++) {
-        signCalc.in[i] <== n2bX.out[i];
-    }
+    signCalc.in <== n2bX.out;
 
-    signCalc.out === in[255];
+    signCalc.out === in.signX;
 }
 
 
@@ -157,31 +147,24 @@ template Bits2Point_Strict() {
 */
 
 template Point2Bits_Strict() {
-    signal input in[2];
-    signal output {binary} out[256];
+    Point input pin;
+    BinaryPoint(254) output out;
 
     var i;
 
     component n2bX = Num2Bits(254);
-    n2bX.in <== in[0];
+    n2bX.in <== pin.x;
     component n2bY = Num2Bits(254);
-    n2bY.in <== in[1];
+    n2bY.in <== pin.y;
 
     component aliasCheckX = AliasCheck();
     component aliasCheckY = AliasCheck();
-    for (i=0; i<254; i++) {
-        aliasCheckX.in[i] <== n2bX.out[i];
-        aliasCheckY.in[i] <== n2bY.out[i];
-    }
+    aliasCheckX.in <== n2bX.out;
+    aliasCheckY.in <== n2bY.out;
 
     component signCalc = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
-    for (i=0; i<254; i++) {
-        signCalc.in[i] <== n2bX.out[i];
-    }
+    signCalc.in <== n2bX.out;
 
-    for (i=0; i<254; i++) {
-        out[i] <== n2bY.out[i];
-    }
-    out[254] <== 0;
-    out[255] <== signCalc.out;
+    out.binY <== n2bY.out;
+    out.signX <== signCalc.out;
 }

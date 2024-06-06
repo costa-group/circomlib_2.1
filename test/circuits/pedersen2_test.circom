@@ -6,7 +6,7 @@ include "../../circuits/bitify.circom";
 
 template Main() {
     signal input in;
-    signal output out[2];
+    Point output {babyedwards} pout;
 
     component pedersen = Pedersen(256);
 
@@ -18,15 +18,14 @@ template Main() {
     in ==> n2b.in;
 
     for  (i=0; i<253; i++) {
-        pedersen.in[i] <== n2b.out[i];
+        pedersen.in.bits[i] <== n2b.out.bits[i];
     }
     signal {binary} aux_0 <== 0;
     for (i=253; i<256; i++) {
-        pedersen.in[i] <== aux_0;
+        pedersen.in.bits[i] <== aux_0;
     }
 
-    pedersen.out[0] ==> out[0];
-    pedersen.out[1] ==> out[1];
+    pedersen.pout ==> pout;
 }
 
 component main = Main();

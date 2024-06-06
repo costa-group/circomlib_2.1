@@ -22,6 +22,7 @@ pragma circom 2.1.5;
 include "../mux4.circom";
 include "escalarmulw4table.circom";
 include "../babyjub.circom";
+include "../buses.circom";
 
 
 
@@ -77,9 +78,9 @@ include "../babyjub.circom";
 
 template EscalarMulWindow(base, k) {
 
-    signal input in[2];
+    Point input {babyedwards} pin;
     signal input {binary} sel[4];
-    signal output out[2];
+    Point output {babyedwards} pout;
 
     var table[16][2];
     component mux;
@@ -91,23 +92,20 @@ template EscalarMulWindow(base, k) {
     mux = MultiMux4(2);
     adder = BabyAdd();
 
-    for (i=0; i<4; i++) {
-        sel[i] ==> mux.s[i];
-    }
+    sel ==> mux.s;
 
     for (i=0; i<16; i++) {
         mux.c[0][i] <== table[i][0];
         mux.c[1][i] <== table[i][1];
     }
 
-    in[0] ==> adder.x1;
-    in[1] ==> adder.y1;
-
-    mux.out[0] ==> adder.x2;
-    mux.out[1] ==> adder.y2;
-
-    adder.xout ==> out[0];
-    adder.yout ==> out[1];
+    pin ==> adder.pin1;
+    Point {babyedwards} aux;
+    aux.x <== mux.out[0];
+    aux.y <== mux.out[1];
+    aux ==> adder.pin2;
+    
+    adder.pout ==> pout;
 }
 
 
@@ -145,9 +143,9 @@ template EscalarMulWindow(base, k) {
  */
 
 template EscalarMul(n, base) {
-    signal input {binary} in[n];
-    signal input inp[2];   // Point input to be added
-    signal output out[2];
+    BinaryNumber(n) input in;
+    Point input {babyedwards} pin;   // Point input to be added
+    Point output {babyedwards} pout;
 
     var nBlocks = ((n-1)>>2)+1;
     var i;
@@ -167,20 +165,17 @@ template EscalarMul(n, base) {
             if (i*4+j >= n) {
                 windows[i].sel[j] <== aux_0;
             } else {
-                windows[i].sel[j] <== in[i*4+j];
+                windows[i].sel[j] <== in.bits[i*4+j];
             }
         }
     }
 
     // Start with generator
-    windows[0].in[0] <== inp[0];
-    windows[0].in[1] <== inp[1];
+    windows[0].pin <== pin;
 
     for(i=0; i<nBlocks-1; i++) {
-        windows[i].out[0] ==> windows[i+1].in[0];
-        windows[i].out[1] ==> windows[i+1].in[1];
+        windows[i].pout ==> windows[i+1].pin;
     }
 
-    windows[nBlocks-1].out[0] ==> out[0];
-    windows[nBlocks-1].out[1] ==> out[1];
+    windows[nBlocks-1].pout ==> pout;
 }

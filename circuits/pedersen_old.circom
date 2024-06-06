@@ -21,7 +21,7 @@ pragma circom 2.1.5;
 // The templates and functions of this file only work for prime field bn128 (21888242871839275222246405745257275088548364400416034343698204186575808495617)
 
 include "escalarmul/escalarmul.circom";
-
+include "buses.circom";
 
 /*
 
@@ -33,8 +33,8 @@ include "escalarmul/escalarmul.circom";
  */
 
 template Pedersen(n) {
-    signal input {binary} in[n];
-    signal output out[2];
+    BinaryNumber(n) input in;
+    Point output {babyedwards} pout[2];
 
     var nexps = ((n-1) \ 250) + 1;
     var nlastbits = n - (nexps-1)*250;
@@ -63,18 +63,16 @@ template Pedersen(n) {
         escalarMuls[i] = EscalarMul(nexpbits, PBASE[i]);
 
         for (j=0; j<nexpbits; j++) {
-            escalarMuls[i].in[j] <== in[250*i + j];
+            escalarMuls[i].in[j] <== in.bits[250*i + j];
         }
 
         if (i==0) {
-            escalarMuls[i].inp[0] <== 0;
-            escalarMuls[i].inp[1] <== 1;
+            escalarMuls[i].pin.x <== 0;
+            escalarMuls[i].pin.y <== 1;
         } else {
-            escalarMuls[i].inp[0] <== escalarMuls[i-1].out[0];
-            escalarMuls[i].inp[1] <== escalarMuls[i-1].out[1];
+            escalarMuls[i].pin <== escalarMuls[i-1].pout;
         }
     }
 
-    escalarMuls[nexps-1].out[0] ==> out[0];
-    escalarMuls[nexps-1].out[1] ==> out[1];
+    escalarMuls[nexps-1].pout ==> pout;
 }

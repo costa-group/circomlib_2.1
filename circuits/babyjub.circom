@@ -68,7 +68,7 @@ include "montgomery.circom";
 */
 
 template BabyAdd() {
-    Point input {babyedwards} p1,p2;
+    Point input {babyedwards} pin1,pin2;
     Point output {babyedwards} pout;
 
     signal beta;
@@ -79,9 +79,9 @@ template BabyAdd() {
     var a = 168700;
     var d = 168696;
 
-    beta <== p1.x*p2.y;
-    gamma <== p1.y*p2.x;
-    delta <== (-a*p1.x + p1.y)*(p2.x + p2.y);
+    beta <== pin1.x*pin2.y;
+    gamma <== pin1.y*pin2.x;
+    delta <== (-a*pin1.x + pin1.y)*(pin2.x + pin2.y);
     tau <== beta * gamma;
 
     pout.x <-- (beta + gamma) / (1 + d*tau);
@@ -108,8 +108,8 @@ template BabyDbl() {
 
     component adder = BabyAdd();
 
-    adder.p1 <== pin;
-    adder.p2 <== pin;
+    adder.pin1 <== pin;
+    adder.pin2 <== pin;
     adder.pout ==> pout;
 }
 
