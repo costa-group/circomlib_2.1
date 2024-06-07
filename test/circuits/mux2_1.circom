@@ -23,7 +23,7 @@ template Main() {
     component cst = Constants();
 
     selector ==> n2b.in;
-    n2b.out.bits ==> mux.s;
+    n2b.out ==> mux.s;
     cst.out ==> mux.c;
 
     mux.out ==> out;

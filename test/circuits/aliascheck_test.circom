@@ -7,7 +7,7 @@ template Main(){
     signal input in[254];
     
     component ac = AliasCheck();
-    ac.in.bits <== BinaryCheckArray(254)(in);
+    ac.in <== BinaryCheckArray(254)(in);
 
 
 }

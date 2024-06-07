@@ -25,7 +25,7 @@ include "poseidon.circom";
 include "bitify.circom";
 include "escalarmul/escalarmulany.circom";
 include "escalarmul/escalarmulfix.circom";
-
+include "buses.circom";
 
 /*
 
@@ -44,12 +44,10 @@ include "escalarmul/escalarmulfix.circom";
 
 template EdDSAPoseidonVerifier() {
     signal input {binary} enabled;
-    signal input Ax;
-    signal input Ay;
+    Point input {babyedwards} A;
 
     signal input S;
-    signal input R8x;
-    signal input R8y;
+    Point input {babyedwards} R8;
 
     signal input M;
 
@@ -74,10 +72,10 @@ template EdDSAPoseidonVerifier() {
 
     component hash = Poseidon(5);
 
-    hash.inputs[0] <== R8x;
-    hash.inputs[1] <== R8y;
-    hash.inputs[2] <== Ax;
-    hash.inputs[3] <== Ay;
+    hash.inputs[0] <== R8.x;
+    hash.inputs[1] <== R8.y;
+    hash.inputs[2] <== A.x;
+    hash.inputs[3] <== A.y;
     hash.inputs[4] <== M;
 
     component h2bits = Num2Bits_strict();
@@ -88,35 +86,27 @@ template EdDSAPoseidonVerifier() {
     // Multiply by 8 by adding it 3 times.  This also ensure that the result is in
     // the subgroup.
     component dbl1 = BabyDbl();
-    dbl1.x <== Ax;
-    dbl1.y <== Ay;
+    dbl1.pin <== A;
     component dbl2 = BabyDbl();
-    dbl2.x <== dbl1.xout;
-    dbl2.y <== dbl1.yout;
+    dbl2.pin <== dbl1.pout;
     component dbl3 = BabyDbl();
-    dbl3.x <== dbl2.xout;
-    dbl3.y <== dbl2.yout;
+    dbl3.pin <== dbl2.pout;
 
     // We check that A is not zero.
     component isZero = IsZero();
-    isZero.in <== dbl3.x;
+    isZero.in <== dbl3.pin.x;
     isZero.out*enabled === 0;
 
     component mulAny = EscalarMulAny(254);
-    for (i=0; i<254; i++) {
-        mulAny.e[i] <== h2bits.out[i];
-    }
-    mulAny.p[0] <== dbl3.xout;
-    mulAny.p[1] <== dbl3.yout;
+    mulAny.e <== h2bits.out;
+    mulAny.pin <== dbl3.pout;
 
 
 // Compute the right side: right =  R8 + right2
 
     component addRight = BabyAdd();
-    addRight.x1 <== R8x;
-    addRight.y1 <== R8y;
-    addRight.x2 <== mulAny.out[0];
-    addRight.y2 <== mulAny.out[1];
+    addRight.pin1 <== R8;
+    addRight.pin2 <== mulAny.pout;
 
 // Calculate left side of equation left = S*B8
 
@@ -125,19 +115,17 @@ template EdDSAPoseidonVerifier() {
         16950150798460657717958625567821834550301663161624707787222815936182638968203
     ];
     component mulFix = EscalarMulFix(253, BASE8);
-    for (i=0; i<253; i++) {
-        mulFix.e[i] <== snum2bits.out[i];
-    }
+    mulFix.e <== snum2bits.out;
 
 // Do the comparation left == right if enabled;
 
     component eqCheckX = ForceEqualIfEnabled();
     eqCheckX.enabled <== enabled;
-    eqCheckX.in[0] <== mulFix.out[0];
-    eqCheckX.in[1] <== addRight.xout;
+    eqCheckX.in[0] <== mulFix.pout.x;
+    eqCheckX.in[1] <== addRight.pout.x;
 
     component eqCheckY = ForceEqualIfEnabled();
     eqCheckY.enabled <== enabled;
-    eqCheckY.in[0] <== mulFix.out[1];
-    eqCheckY.in[1] <== addRight.yout;
+    eqCheckY.in[0] <== mulFix.pout.y;
+    eqCheckY.in[1] <== addRight.pout.y;
 }

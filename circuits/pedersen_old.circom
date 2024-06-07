@@ -33,8 +33,8 @@ include "buses.circom";
  */
 
 template Pedersen(n) {
-    BinaryNumber(n) input in;
-    Point output {babyedwards} pout[2];
+    signal input {binary} in[n];
+    Point output {babyedwards} pout;
 
     var nexps = ((n-1) \ 250) + 1;
     var nlastbits = n - (nexps-1)*250;
@@ -58,17 +58,20 @@ template Pedersen(n) {
     var i;
     var j;
     var nexpbits;
+    Point {babyedwards} paux; // Auxiliar point [0, 1]
+    paux.x <== 0;
+    paux.y <== 1;
     for (i=0; i<nexps; i++) {
         nexpbits = (i == nexps-1) ? nlastbits : 250;
         escalarMuls[i] = EscalarMul(nexpbits, PBASE[i]);
 
         for (j=0; j<nexpbits; j++) {
-            escalarMuls[i].in[j] <== in.bits[250*i + j];
+            escalarMuls[i].in[j] <== in[250*i + j];
         }
-
+	
+	
         if (i==0) {
-            escalarMuls[i].pin.x <== 0;
-            escalarMuls[i].pin.y <== 1;
+            escalarMuls[i].pin <== paux;
         } else {
             escalarMuls[i].pin <== escalarMuls[i-1].pout;
         }

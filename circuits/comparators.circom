@@ -117,7 +117,7 @@ template LessThan(n) {
 
     n2b.in <== in[0]+ (1<<n) - in[1];
 
-    out <== 1-n2b.out.bits[n];
+    out <== 1-n2b.out[n];
 }
 
 
@@ -214,7 +214,7 @@ template GreaterEqThan(n) {
 */
 
 template Sign() {
-    BinaryNumber(254) input in;
+    signal input {binary} in[254];
     signal output {binary} sign;
 
     component comp = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
@@ -240,7 +240,7 @@ template Sign() {
 */
 
 template CompConstant(ct) {
-    BinaryNumber(254) input in;
+    signal input {binary} in[254];
     signal output {binary} out;
 
     signal parts[127];
@@ -261,8 +261,8 @@ template CompConstant(ct) {
     for (i=0;i<127; i++) {
         clsb = (ct >> (i*2)) & 1;
         cmsb = (ct >> (i*2+1)) & 1;
-        slsb = in.bits[i*2];
-        smsb = in.bits[i*2+1];
+        slsb = in[i*2];
+        smsb = in[i*2+1];
 
         if ((cmsb==0)&&(clsb==0)) {
             parts[i] <== -b*smsb*slsb + b*smsb + b*slsb;
@@ -287,6 +287,6 @@ template CompConstant(ct) {
 
     num2bits.in <== sout;
 
-    out <== num2bits.out.bits[127];
+    out <== num2bits.out[127];
 }
 

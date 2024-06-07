@@ -21,6 +21,7 @@ pragma circom 2.1.5;
 include "../mux3.circom";
 include "../montgomery.circom";
 include "../babyjub.circom";
+include "../buses.circom";
 
 
 /*
@@ -57,9 +58,9 @@ include "../babyjub.circom";
  
 template WindowMulFix() {
     signal input {binary} in[3];
-    signal input base[2];
-    signal output out[2];
-    signal output out8[2];   // Returns 8*Base (To be linked)
+    Point input {babymontgomery} base;
+    Point output {babymontgomery} pout;
+    Point output {babymontgomery} pout8;   // Returns 8*Base (To be linked)
 
     component mux = MultiMux3(2);
 
@@ -77,68 +78,54 @@ template WindowMulFix() {
 
 // in[0]  -> 1*BASE
 
-    mux.c[0][0] <== base[0];
-    mux.c[1][0] <== base[1];
+    mux.c[0][0] <== base.x;
+    mux.c[1][0] <== base.y;
 
 // in[1] -> 2*BASE
-    dbl2.in[0] <== base[0];
-    dbl2.in[1] <== base[1];
-    mux.c[0][1] <== dbl2.out[0];
-    mux.c[1][1] <== dbl2.out[1];
+    dbl2.pin <== base;
+    mux.c[0][1] <== dbl2.pout.x;
+    mux.c[1][1] <== dbl2.pout.y;
 
 // in[2] -> 3*BASE
-    adr3.in1[0] <== base[0];
-    adr3.in1[1] <== base[1];
-    adr3.in2[0] <== dbl2.out[0];
-    adr3.in2[1] <== dbl2.out[1];
-    mux.c[0][2] <== adr3.out[0];
-    mux.c[1][2] <== adr3.out[1];
+    adr3.pin1 <== base;
+    adr3.pin2 <== dbl2.pout;
+    mux.c[0][2] <== adr3.pout.x;
+    mux.c[1][2] <== adr3.pout.y;
 
 // in[3] -> 4*BASE
-    adr4.in1[0] <== base[0];
-    adr4.in1[1] <== base[1];
-    adr4.in2[0] <== adr3.out[0];
-    adr4.in2[1] <== adr3.out[1];
-    mux.c[0][3] <== adr4.out[0];
-    mux.c[1][3] <== adr4.out[1];
+    adr4.pin1 <== base;
+    adr4.pin2 <== adr3.pout;
+    mux.c[0][3] <== adr4.pout.x;
+    mux.c[1][3] <== adr4.pout.y;
 
 // in[4] -> 5*BASE
-    adr5.in1[0] <== base[0];
-    adr5.in1[1] <== base[1];
-    adr5.in2[0] <== adr4.out[0];
-    adr5.in2[1] <== adr4.out[1];
-    mux.c[0][4] <== adr5.out[0];
-    mux.c[1][4] <== adr5.out[1];
+    adr5.pin1 <== base;
+    adr5.pin2 <== adr4.pout;
+    mux.c[0][4] <== adr5.pout.x;
+    mux.c[1][4] <== adr5.pout.y;
 
 // in[5] -> 6*BASE
-    adr6.in1[0] <== base[0];
-    adr6.in1[1] <== base[1];
-    adr6.in2[0] <== adr5.out[0];
-    adr6.in2[1] <== adr5.out[1];
-    mux.c[0][5] <== adr6.out[0];
-    mux.c[1][5] <== adr6.out[1];
+    adr6.pin1 <== base;
+    adr6.pin2 <== adr5.pout;
+    mux.c[0][5] <== adr6.pout.x;
+    mux.c[1][5] <== adr6.pout.y;
 
 // in[6] -> 7*BASE
-    adr7.in1[0] <== base[0];
-    adr7.in1[1] <== base[1];
-    adr7.in2[0] <== adr6.out[0];
-    adr7.in2[1] <== adr6.out[1];
-    mux.c[0][6] <== adr7.out[0];
-    mux.c[1][6] <== adr7.out[1];
+    adr7.pin1 <== base;
+    adr7.pin2 <== adr6.pout;
+    mux.c[0][6] <== adr7.pout.x;
+    mux.c[1][6] <== adr7.pout.y;
 
 // in[7] -> 8*BASE
-    adr8.in1[0] <== base[0];
-    adr8.in1[1] <== base[1];
-    adr8.in2[0] <== adr7.out[0];
-    adr8.in2[1] <== adr7.out[1];
-    mux.c[0][7] <== adr8.out[0];
-    mux.c[1][7] <== adr8.out[1];
+    adr8.pin1 <== base;
+    adr8.pin2 <== adr7.pout;
+    mux.c[0][7] <== adr8.pout.x;
+    mux.c[1][7] <== adr8.pout.y;
 
-    out8[0] <== adr8.out[0];
-    out8[1] <== adr8.out[1];
+    pout8 <== adr8.pout;
 
-    out[0] <== mux.out[0];
-    out[1] <== mux.out[1];
+    pout.x <== mux.out[0];
+    pout.y <== mux.out[1];
 }
 
 
@@ -155,9 +142,9 @@ template WindowMulFix() {
 
 template SegmentMulFix(nWindows) {
     signal input {binary} e[nWindows*3];
-    signal input base[2];
-    signal output out[2];
-    signal output dbl[2];
+    Point input {babyedwards} base;
+    Point output {babyedwards} pout;
+    Point output {babymontgomery} dbl;
 
     var i;
     var j;
@@ -165,8 +152,7 @@ template SegmentMulFix(nWindows) {
     // Convert the base to montgomery
 
     component e2m = Edwards2Montgomery();
-    e2m.in[0] <== base[0];
-    e2m.in[1] <== base[1];
+    e2m.pin <== base;
 
     component windows[nWindows];
     component adders[nWindows];
@@ -179,62 +165,50 @@ template SegmentMulFix(nWindows) {
         windows[i] = WindowMulFix();
         cadders[i] = MontgomeryAdd();
         if (i==0) {
-            windows[i].base[0] <== e2m.out[0];
-            windows[i].base[1] <== e2m.out[1];
-            cadders[i].in1[0] <== e2m.out[0];
-            cadders[i].in1[1] <== e2m.out[1];
+            windows[i].base <== e2m.pout;
+            cadders[i].pin1 <== e2m.pout;
         } else {
-            windows[i].base[0] <== windows[i-1].out8[0];
-            windows[i].base[1] <== windows[i-1].out8[1];
-            cadders[i].in1[0] <== cadders[i-1].out[0];
-            cadders[i].in1[1] <== cadders[i-1].out[1];
+            windows[i].base <== windows[i-1].pout8;
+            cadders[i].pin1 <== cadders[i-1].pout;
         }
         for (j=0; j<3; j++) {
             windows[i].in[j] <== e[3*i+j];
         }
         if (i<nWindows-1) {
-            cadders[i].in2[0] <== windows[i].out8[0];
-            cadders[i].in2[1] <== windows[i].out8[1];
+            cadders[i].pin2 <== windows[i].pout8;
         } else {
-            dblLast.in[0] <== windows[i].out8[0];
-            dblLast.in[1] <== windows[i].out8[1];
-            cadders[i].in2[0] <== dblLast.out[0];
-            cadders[i].in2[1] <== dblLast.out[1];
+            dblLast.pin <== windows[i].pout8;
+            cadders[i].pin2 <== dblLast.pout;
         }
     }
 
     for (i=0; i<nWindows; i++) {
         adders[i] = MontgomeryAdd();
         if (i==0) {
-            adders[i].in1[0] <== dblLast.out[0];
-            adders[i].in1[1] <== dblLast.out[1];
+            adders[i].pin1 <== dblLast.pout;
         } else {
-            adders[i].in1[0] <== adders[i-1].out[0];
-            adders[i].in1[1] <== adders[i-1].out[1];
+            adders[i].pin1 <== adders[i-1].pout;
         }
-        adders[i].in2[0] <== windows[i].out[0];
-        adders[i].in2[1] <== windows[i].out[1];
+        adders[i].pin2 <== windows[i].pout;
     }
 
     component m2e = Montgomery2Edwards();
     component cm2e = Montgomery2Edwards();
 
-    m2e.in[0] <== adders[nWindows-1].out[0];
-    m2e.in[1] <== adders[nWindows-1].out[1];
-    cm2e.in[0] <== cadders[nWindows-1].out[0];
-    cm2e.in[1] <== cadders[nWindows-1].out[1];
+    m2e.pin <== adders[nWindows-1].pout;
+    cm2e.pin <== cadders[nWindows-1].pout;
 
     component cAdd = BabyAdd();
-    cAdd.x1 <== m2e.out[0];
-    cAdd.y1 <== m2e.out[1];
-    cAdd.x2 <== -cm2e.out[0];
-    cAdd.y2 <== cm2e.out[1];
+    cAdd.pin1 <== m2e.pout;
+    
+    Point {babyedwards} aux;
+    aux.x <== -cm2e.pout.x;
+    aux.y <== cm2e.pout.y;
+    cAdd.pin2 <== aux;
 
-    cAdd.xout ==> out[0];
-    cAdd.yout ==> out[1];
+    cAdd.pout ==> pout;
 
-    windows[nWindows-1].out8[0] ==> dbl[0];
-    windows[nWindows-1].out8[1] ==> dbl[1];
+    windows[nWindows-1].pout8 ==> dbl;
 }
 
 
@@ -250,7 +224,7 @@ template SegmentMulFix(nWindows) {
  
 template EscalarMulFix(n, BASE) {
     signal input {binary} e[n];              // Input in binary format
-    signal output out[2];           // Point (Twisted format)
+    Point output {babyedwards} pout;           // Point (Twisted format)
 
     var nsegments = (n-1)\246 +1;       // 249 probably would work. But I'm not sure and for security I keep 246
     var nlastsegment = n - (nsegments-1)*249;
@@ -259,6 +233,10 @@ template EscalarMulFix(n, BASE) {
 
     component m2e[nsegments-1];
     component adders[nsegments-1];
+    
+    Point {babyedwards} aux_base;
+    aux_base.x <== BASE[0];
+    aux_base.y <== BASE[1];
 
     var s;
     var i;
@@ -283,35 +261,27 @@ template EscalarMulFix(n, BASE) {
         }
 
         if (s==0) {
-            segments[s].base[0] <== BASE[0];
-            segments[s].base[1] <== BASE[1];
+            segments[s].base <== aux_base;
         } else {
             m2e[s-1] = Montgomery2Edwards();
             adders[s-1] = BabyAdd();
 
-            segments[s-1].dbl[0] ==> m2e[s-1].in[0];
-            segments[s-1].dbl[1] ==> m2e[s-1].in[1];
+            segments[s-1].dbl ==> m2e[s-1].pin;
 
-            m2e[s-1].out[0] ==> segments[s].base[0];
-            m2e[s-1].out[1] ==> segments[s].base[1];
+            m2e[s-1].pout ==> segments[s].base;
 
             if (s==1) {
-                segments[s-1].out[0] ==> adders[s-1].x1;
-                segments[s-1].out[1] ==> adders[s-1].y1;
+                segments[s-1].pout ==> adders[s-1].pin1;
             } else {
-                adders[s-2].xout ==> adders[s-1].x1;
-                adders[s-2].yout ==> adders[s-1].y1;
+                adders[s-2].pout ==> adders[s-1].pin1;
             }
-            segments[s].out[0] ==> adders[s-1].x2;
-            segments[s].out[1] ==> adders[s-1].y2;
+            segments[s].pout ==> adders[s-1].pin2;
         }
     }
 
     if (nsegments == 1) {
-        segments[0].out[0] ==> out[0];
-        segments[0].out[1] ==> out[1];
+        segments[0].pout ==> pout;
     } else {
-        adders[nsegments-2].xout ==> out[0];
-        adders[nsegments-2].yout ==> out[1];
+        adders[nsegments-2].pout ==> pout;
     }
 }

@@ -15,7 +15,7 @@ template Main() {
     component n2b = Num2Bits(253);
     component escalarMul = EscalarMul(253, base);
 
-    Point {babyedwards} aux;
+    Point {babyedwards} aux; // Auxiliar point [0,1]
     aux.x <== 0;
     aux.y <== 1;
     escalarMul.pin <== aux;

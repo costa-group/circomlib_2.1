@@ -37,14 +37,14 @@ include "buses.circom";
 
 template Num2Bits(n) {
     signal input in;
-    BinaryNumber(n) output out;
+    signal output {binary} out[n];
     var lc1=0;
 
     var e2=1;
     for (var i = 0; i<n; i++) {
-        out.bits[i] <-- (in >> i) & 1;
-        out.bits[i] * (out.bits[i] -1 ) === 0;
-        lc1 += out.bits[i] * e2;
+        out[i] <-- (in >> i) & 1;
+        out[i] * (out[i] -1 ) === 0;
+        lc1 += out[i] * e2;
         e2 = e2+e2;
     }
     
@@ -64,7 +64,7 @@ template Num2Bits(n) {
 
 template Num2Bits_strict() {
     signal input in;
-    BinaryNumber(254) output out;
+    signal output {binary} out[254];
 
     component aliasCheck = AliasCheck();
     component n2b = Num2Bits(254);
@@ -88,13 +88,13 @@ template Num2Bits_strict() {
 
 
 template Bits2Num(n) {
-    BinaryNumber(n) input in;
+    signal input {binary} in[n];
     signal output {maxbit} out;
     var lc1=0;
 
     var e2 = 1;
     for (var i = 0; i<n; i++) {
-        lc1 += in.bits[i] * e2;
+        lc1 += in[i] * e2;
         e2 = e2 + e2;
     }
     out.maxbit = n;
@@ -115,7 +115,7 @@ template Bits2Num(n) {
 */
 
 template Bits2Num_strict() {
-    BinaryNumber(254) input in;
+    signal input {binary} in[254];
     signal output {maxbit} out;
 
     component aliasCheck = AliasCheck();
@@ -141,7 +141,7 @@ template Bits2Num_strict() {
 
 template Num2BitsNeg(n) {
     signal input in;
-    BinaryNumber(n) output out;
+    signal output {binary} out[n];
     var lc1=0;
 
     component isZero;
@@ -151,9 +151,9 @@ template Num2BitsNeg(n) {
     var neg = n == 0 ? 0 : 2**n - in;
 
     for (var i = 0; i<n; i++) {
-        out.bits[i] <-- (neg >> i) & 1;
-        out.bits[i] * (out.bits[i] -1 ) === 0;
-        lc1 += out.bits[i] * 2**i;
+        out[i] <-- (neg >> i) & 1;
+        out[i] * (out[i] -1 ) === 0;
+        lc1 += out[i] * 2**i;
     }
 
     in ==> isZero.in;

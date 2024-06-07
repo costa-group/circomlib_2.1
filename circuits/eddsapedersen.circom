@@ -45,15 +45,13 @@ include "escalarmul/escalarmulfix.circom";
 template EdDSAPedersenVerifier(n) {
     signal input {binary} msg[n];
 
-    signal input {binary} A[256];
-    signal input {binary} R8[256];
-    signal input {binary} S[256];
+    BinaryPoint(254) input A;
+    BinaryPoint(254) input R8;
+    signal input {binary} S[254];
 
-    signal Ax;
-    signal Ay;
+    Point pA;
 
-    signal R8x;
-    signal R8y;
+    Point pR8;
 
     var i;
 
@@ -61,83 +59,74 @@ template EdDSAPedersenVerifier(n) {
 
     component  compConstant = CompConstant(2736030358979909402780800718157159386076813972158567259200215660948447373040);
 
-    for (i=0; i<254; i++) {
-        S[i] ==> compConstant.in[i];
-    }
+    S ==> compConstant.in;
     compConstant.out === 0;
-    S[254] === 0;
-    S[255] === 0;
+    //S[254] === 0; // TODO: removed these two extra bits
+    //S[255] === 0;
 
 // Convert A to Field elements (And verify A)
 
     component bits2pointA = Bits2Point_Strict();
 
-    for (i=0; i<256; i++) {
-        bits2pointA.in[i] <== A[i];
-    }
-    Ax <== bits2pointA.out[0];
-    Ay <== bits2pointA.out[1];
+    bits2pointA.in <== A;
+    pA <== bits2pointA.pout;
 
 // Convert R8 to Field elements (And verify R8)
 
     component bits2pointR8 = Bits2Point_Strict();
 
-    for (i=0; i<256; i++) {
-        bits2pointR8.in[i] <== R8[i];
-    }
-    R8x <== bits2pointR8.out[0];
-    R8y <== bits2pointR8.out[1];
+    bits2pointR8.in <== R8;
+    pR8 <== bits2pointR8.pout;
 
 // Calculate the h = H(R,A, msg)
 
     component hash = Pedersen(512+n);
 
-    for (i=0; i<256; i++) {
-        hash.in[i] <== R8[i];
-        hash.in[256+i] <== A[i];
+    for (i=0; i<254; i++) {
+        hash.in[i] <== R8.binY[i];
+        hash.in[256+i] <== A.binY[i];
     }
+    hash.in[254] <== 0; // TODO: changes because use of buses, podemos no añadirlo?
+    hash.in[255] <== R8.signX;
+    hash.in[254 + 256] <== 0; // TODO: changes because use of buses
+    hash.in[255 + 256] <== A.signX;
     for (i=0; i<n; i++) {
         hash.in[512+i] <== msg[i];
     }
 
     component point2bitsH = Point2Bits_Strict();
-    point2bitsH.in[0] <== hash.out[0];
-    point2bitsH.in[1] <== hash.out[1];
+    point2bitsH.pin <== hash.pout;
 
 // Calculate second part of the right side:  right2 = h*8*A
 
     // Multiply by 8 by adding it 3 times.  This also ensure that the result is in
     // the subgroup.
     component dbl1 = BabyDbl();
-    dbl1.x <== Ax;
-    dbl1.y <== Ay;
+    dbl1.pin <== pA;
     component dbl2 = BabyDbl();
-    dbl2.x <== dbl1.xout;
-    dbl2.y <== dbl1.yout;
+    dbl2.pin <== dbl1.pout;
     component dbl3 = BabyDbl();
-    dbl3.x <== dbl2.xout;
-    dbl3.y <== dbl2.yout;
+    dbl3.pin <== dbl2.pout;
 
     // We check that A is not zero.
     component isZero = IsZero();
-    isZero.in <== dbl3.x;
+    isZero.in <== dbl3.pin.x;
     isZero.out === 0;
 
     component mulAny = EscalarMulAny(256);
-    for (i=0; i<256; i++) {
-        mulAny.e[i] <== point2bitsH.out[i];
+    for (i=0; i<254; i++) {
+        mulAny.e[i] <== point2bitsH.out.binY[i];
     }
-    mulAny.p[0] <== dbl3.xout;
-    mulAny.p[1] <== dbl3.yout;
+    mulAny.e[254] <== 0; // TODO: changes because use of buses, podemos no añadirlo?
+    mulAny.e[255] <== point2bitsH.out.signX;
+    mulAny.pin <== dbl3.pout;
 
 
 // Compute the right side: right =  R8 + right2
 
     component addRight = BabyAdd();
-    addRight.x1 <== R8x;
-    addRight.y1 <== R8y;
-    addRight.x2 <== mulAny.out[0];
-    addRight.y2 <== mulAny.out[1];
+    addRight.pin1 <== pR8;
+    addRight.pin2 <== mulAny.pout;
 
 // Calculate left side of equation left = S*B8
 
@@ -146,12 +135,13 @@ template EdDSAPedersenVerifier(n) {
         16950150798460657717958625567821834550301663161624707787222815936182638968203
     ];
     component mulFix = EscalarMulFix(256, BASE8);
-    for (i=0; i<256; i++) {
+    for (i=0; i<254; i++) {
         mulFix.e[i] <== S[i];
     }
+    mulFix.e[254] <== 0;
+    mulFix.e[255] <== 0;
 
 // Do the comparation left == right
 
-    mulFix.out[0] === addRight.xout;
-    mulFix.out[1] === addRight.yout;
+    mulFix.pout === addRight.pout;
 }

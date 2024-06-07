@@ -143,7 +143,7 @@ template EscalarMulWindow(base, k) {
  */
 
 template EscalarMul(n, base) {
-    BinaryNumber(n) input in;
+    signal input {binary} in[n];
     Point input {babyedwards} pin;   // Point input to be added
     Point output {babyedwards} pout;
 
@@ -165,7 +165,7 @@ template EscalarMul(n, base) {
             if (i*4+j >= n) {
                 windows[i].sel[j] <== aux_0;
             } else {
-                windows[i].sel[j] <== in.bits[i*4+j];
+                windows[i].sel[j] <== in[i*4+j];
             }
         }
     }

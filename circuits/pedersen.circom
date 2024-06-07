@@ -189,7 +189,7 @@ template Segment(nWindows) {
  */
 
 template Pedersen(n) {
-    BinaryNumber(n) input in;
+    signal input {binary} in[n];
     Point output {babyedwards} pout;
 
     var BASE[10][2] = [
@@ -223,7 +223,7 @@ template Pedersen(n) {
         aux[i].y <== BASE[i][1];
         segments[i].base <== aux[i];
         for (j = 0; j<nBits; j++) {
-            segments[i].in[j] <== in.bits[i*200+j];
+            segments[i].in[j] <== in[i*200+j];
         }
         // Fill padding bits
         for (j = nBits; j < nWindows*4; j++) {

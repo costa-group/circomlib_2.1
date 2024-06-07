@@ -21,6 +21,7 @@ pragma circom 2.1.5;
 include "../montgomery.circom";
 include "../babyjub.circom";
 include "../comparators.circom";
+include "../buses.circom";
 
 
 /*
@@ -36,13 +37,22 @@ include "../comparators.circom";
 
  */
 
-template Multiplexor2() {
+template MultiplexorEdwards2() {
     signal input {binary} sel;
-    signal input in[2][2];
-    signal output out[2];
+    Point input {babyedwards} pin[2];
+    Point output {babyedwards} pout;
 
-    out[0] <== (in[1][0] - in[0][0])*sel + in[0][0];
-    out[1] <== (in[1][1] - in[0][1])*sel + in[0][1];
+    pout.x <== (pin[1].x - pin[0].x)*sel + pin[0].x;
+    pout.y <== (pin[1].y - pin[0].y)*sel + pin[0].y;
+}
+
+template MultiplexorMontgomery2() {
+    signal input {binary} sel;
+    Point input {babymontgomery} pin[2];
+    Point output {babymontgomery} pout;
+
+    pout.x <== (pin[1].x - pin[0].x)*sel + pin[0].x;
+    pout.y <== (pin[1].y - pin[0].y)*sel + pin[0].y;
 }
 
 
@@ -66,33 +76,28 @@ template Multiplexor2() {
 
 template BitElementMulAny() {
     signal input {binary} sel;
-    signal input dblIn[2];
-    signal input addIn[2];
-    signal output dblOut[2];
-    signal output addOut[2];
+    Point input {babymontgomery} dblIn;
+    Point input {babymontgomery} addIn;
+    Point output {babymontgomery} dblOut;
+    Point output {babymontgomery} addOut;
 
     component doubler = MontgomeryDouble();
     component adder = MontgomeryAdd();
-    component selector = Multiplexor2();
+    component selector = MultiplexorMontgomery2();
 
 
     sel ==> selector.sel;
 
-    dblIn[0] ==> doubler.in[0];
-    dblIn[1] ==> doubler.in[1];
-    doubler.out[0] ==> adder.in1[0];
-    doubler.out[1] ==> adder.in1[1];
-    addIn[0] ==> adder.in2[0];
-    addIn[1] ==> adder.in2[1];
-    addIn[0] ==> selector.in[0][0];
-    addIn[1] ==> selector.in[0][1];
-    adder.out[0] ==> selector.in[1][0];
-    adder.out[1] ==> selector.in[1][1];
+    dblIn ==> doubler.pin;
+    doubler.pout ==> adder.pin1;
+    addIn ==> adder.pin2;
+    addIn ==> selector.pin[0];
+    adder.pout ==> selector.pin[1];
 
-    doubler.out[0] ==> dblOut[0];
-    doubler.out[1] ==> dblOut[1];
-    selector.out[0] ==> addOut[0];
-    selector.out[1] ==> addOut[1];
+
+    doubler.pout ==> dblOut;
+    selector.pout ==> addOut;
+
 }
 
 /*
@@ -109,61 +114,52 @@ TODO: ADD SCHEME
 
 template SegmentMulAny(n) {
     signal input {binary}  e[n];
-    signal input p[2];
-    signal output out[2];
-    signal output dbl[2];
+    Point input {babyedwards} pin;
+    Point output {babyedwards} pout;
+    Point output {babymontgomery} dbl;
 
     component bits[n-1];
 
     component e2m = Edwards2Montgomery();
 
-    p[0] ==> e2m.in[0];
-    p[1] ==> e2m.in[1];
+    pin ==> e2m.pin;
 
     var i;
 
     bits[0] = BitElementMulAny();
-    e2m.out[0] ==> bits[0].dblIn[0];
-    e2m.out[1] ==> bits[0].dblIn[1];
-    e2m.out[0] ==> bits[0].addIn[0];
-    e2m.out[1] ==> bits[0].addIn[1];
+    e2m.pout ==> bits[0].dblIn;
+    e2m.pout ==> bits[0].addIn;
     e[1] ==> bits[0].sel;
 
     for (i=1; i<n-1; i++) {
         bits[i] = BitElementMulAny();
 
-        bits[i-1].dblOut[0] ==> bits[i].dblIn[0];
-        bits[i-1].dblOut[1] ==> bits[i].dblIn[1];
-        bits[i-1].addOut[0] ==> bits[i].addIn[0];
-        bits[i-1].addOut[1] ==> bits[i].addIn[1];
+        bits[i-1].dblOut ==> bits[i].dblIn;
+        bits[i-1].addOut ==> bits[i].addIn;
         e[i+1] ==> bits[i].sel;
     }
 
-    bits[n-2].dblOut[0] ==> dbl[0];
-    bits[n-2].dblOut[1] ==> dbl[1];
+    bits[n-2].dblOut ==> dbl;
 
     component m2e = Montgomery2Edwards();
 
-    bits[n-2].addOut[0] ==> m2e.in[0];
-    bits[n-2].addOut[1] ==> m2e.in[1];
+    bits[n-2].addOut ==> m2e.pin;
 
     component eadder = BabyAdd();
 
-    m2e.out[0] ==> eadder.x1;
-    m2e.out[1] ==> eadder.y1;
-    -p[0] ==> eadder.x2;
-    p[1] ==> eadder.y2;
+    m2e.pout ==> eadder.pin1;
+    Point {babyedwards} inv_pin;
+    inv_pin.x <== -pin.x;
+    inv_pin.y <== pin.y;
+    inv_pin ==> eadder.pin2;
 
-    component lastSel = Multiplexor2();
+    component lastSel = MultiplexorEdwards2();
 
     e[0] ==> lastSel.sel;
-    eadder.xout ==> lastSel.in[0][0];
-    eadder.yout ==> lastSel.in[0][1];
-    m2e.out[0] ==> lastSel.in[1][0];
-    m2e.out[1] ==> lastSel.in[1][1];
+    eadder.pout ==> lastSel.pin[0];
+    m2e.pout ==> lastSel.pin[1];
 
-    lastSel.out[0] ==> out[0];
-    lastSel.out[1] ==> out[1];
+    lastSel.pout ==> pout;
 }
 
 /*
@@ -182,8 +178,8 @@ TODO: ADD SCHEME
 
 template EscalarMulAny(n) {
     signal input {binary} e[n];              // Input in binary format
-    signal input p[2];              // Point (Twisted format)
-    signal output out[2];           // Point (Twisted format)
+    Point input {babyedwards} pin;              // Point (Twisted format)
+    Point output {babyedwards} pout;           // Point (Twisted format)
 
     var nsegments = (n-1)\148 +1;
     var nlastsegment = n - (nsegments-1)*148;
@@ -193,11 +189,13 @@ template EscalarMulAny(n) {
     component m2e[nsegments-1];
     component adders[nsegments-1];
     component zeropoint = IsZero();
-    zeropoint.in <== p[0];
+    zeropoint.in <== pin.x;
 
     var s;
     var i;
     var nseg;
+    
+    Point {babyedwards} aux;
 
     for (s=0; s<nsegments; s++) {
 
@@ -211,39 +209,32 @@ template EscalarMulAny(n) {
 
         if (s==0) {
             // force G8 point if input point is zero
-            segments[s].p[0] <== p[0] + (5299619240641551281634865583518297030282874472190772894086521144482721001553 - p[0])*zeropoint.out;
-            segments[s].p[1] <== p[1] + (16950150798460657717958625567821834550301663161624707787222815936182638968203 - p[1])*zeropoint.out;
+            aux.x <== pin.x + (5299619240641551281634865583518297030282874472190772894086521144482721001553 - pin.x)*zeropoint.out;
+            aux.y <== pin.y + (16950150798460657717958625567821834550301663161624707787222815936182638968203 - pin.y)*zeropoint.out;
+            segments[s].pin <== aux;
         } else {
             doublers[s-1] = MontgomeryDouble();
             m2e[s-1] = Montgomery2Edwards();
             adders[s-1] = BabyAdd();
 
-            segments[s-1].dbl[0] ==> doublers[s-1].in[0];
-            segments[s-1].dbl[1] ==> doublers[s-1].in[1];
-
-            doublers[s-1].out[0] ==> m2e[s-1].in[0];
-            doublers[s-1].out[1] ==> m2e[s-1].in[1];
-
-            m2e[s-1].out[0] ==> segments[s].p[0];
-            m2e[s-1].out[1] ==> segments[s].p[1];
+            segments[s-1].dbl ==> doublers[s-1].pin;
+            doublers[s-1].pout ==> m2e[s-1].pin;
+            m2e[s-1].pout ==> segments[s].pin;
 
             if (s==1) {
-                segments[s-1].out[0] ==> adders[s-1].x1;
-                segments[s-1].out[1] ==> adders[s-1].y1;
+                segments[s-1].pout ==> adders[s-1].pin1;
             } else {
-                adders[s-2].xout ==> adders[s-1].x1;
-                adders[s-2].yout ==> adders[s-1].y1;
+                adders[s-2].pout ==> adders[s-1].pin1;
             }
-            segments[s].out[0] ==> adders[s-1].x2;
-            segments[s].out[1] ==> adders[s-1].y2;
+            segments[s].pout ==> adders[s-1].pin2;
         }
     }
 
     if (nsegments == 1) {
-        segments[0].out[0]*(1-zeropoint.out) ==> out[0];
-        segments[0].out[1]+(1-segments[0].out[1])*zeropoint.out ==> out[1];
+        segments[0].pout.x*(1-zeropoint.out) ==> pout.x;
+        segments[0].pout.y+(1-segments[0].pout.y)*zeropoint.out ==> pout.y;
     } else {
-        adders[nsegments-2].xout*(1-zeropoint.out) ==> out[0];
-        adders[nsegments-2].yout+(1-adders[nsegments-2].yout)*zeropoint.out ==> out[1];
+        adders[nsegments-2].pout.x*(1-zeropoint.out) ==> pout.x;
+        adders[nsegments-2].pout.y+(1-adders[nsegments-2].pout.y)*zeropoint.out ==> pout.y;
     }
 }
