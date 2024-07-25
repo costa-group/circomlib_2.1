@@ -26,9 +26,9 @@ fnc:  0 -> VERIFY INCLUSION
       1 -> VERIFY NOT INCLUSION
 
  */
- pragma circom 2.0.0;
+ pragma circom 2.1.9;
 
-
+include "smtbuses.circom";
 include "../gates.circom";
 include "../bitify.circom";
 include "../comparators.circom";
@@ -73,33 +73,25 @@ template SMTVerifier(nLevels) {
     for (i=0; i<nLevels; i++) {
         sm[i] = SMTVerifierSM();
         if (i==0) {
-            sm[i].prev_top <== enabled;
-            sm[i].prev_i0 <== 0;
-            sm[i].prev_inew <== 0;
-            sm[i].prev_iold <== 0;
-            sm[i].prev_na <== 1-enabled;
+            sm[i].prev.top <== enabled;
+            sm[i].prev.i0 <== 0;
+            sm[i].prev.inew <== 0;
+            sm[i].prev.iold <== 0;
+            sm[i].prev.na <== 1-enabled;
         } else {
-            sm[i].prev_top <== sm[i-1].st_top;
-            sm[i].prev_i0 <== sm[i-1].st_i0;
-            sm[i].prev_inew <== sm[i-1].st_inew;
-            sm[i].prev_iold <== sm[i-1].st_iold;
-            sm[i].prev_na <== sm[i-1].st_na;
+            sm[i].prev <== sm[i-1].st;
         }
         sm[i].is0 <== isOld0;
         sm[i].fnc <== fnc;
         sm[i].levIns <== smtLevIns.levIns[i];
     }
-    sm[nLevels-1].st_na + sm[nLevels-1].st_iold + sm[nLevels-1].st_inew + sm[nLevels-1].st_i0 === 1;
+    sm[nLevels-1].st.na + sm[nLevels-1].st.iold + sm[nLevels-1].st.inew + sm[nLevels-1].st.i0 === 1;
 
     component levels[nLevels];
     for (i=nLevels-1; i != -1; i--) {
         levels[i] = SMTVerifierLevel();
 
-        levels[i].st_top <== sm[i].st_top;
-        levels[i].st_i0 <== sm[i].st_i0;
-        levels[i].st_inew <== sm[i].st_inew;
-        levels[i].st_iold <== sm[i].st_iold;
-        levels[i].st_na <== sm[i].st_na;
+        levels[i].st <== sm[i].st;
 
         levels[i].sibling <== siblings[i];
         levels[i].old1leaf <== hash1Old.out;

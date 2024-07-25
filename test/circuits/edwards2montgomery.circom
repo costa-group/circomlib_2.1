@@ -6,7 +6,9 @@ include "../../circuits/babyjub.circom";
 template Main(){
     Point input a;
     Point output out;
-    out <== Edwards2Montgomery()(BabyCheck()(a));
+    Point {babyedwards} a_aux <== a;
+    //out <== Edwards2Montgomery()(BabyCheck()(a));
+    out <== Edwards2Montgomery()(a_aux);
 }
 
 

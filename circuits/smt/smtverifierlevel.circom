@@ -36,14 +36,12 @@ na           0
 H' is the Hash function with the inputs shifted acordingly.
 
 *****/
-pragma circom 2.0.0;
+pragma circom 2.1.9;
+
+include "smtbuses.circom";
 
 template SMTVerifierLevel() {
-    signal input st_top;
-    signal input st_i0;
-    signal input st_iold;
-    signal input st_inew;
-    signal input st_na;
+    SMTVerifierState input st;
 
     signal output root;
     signal input sibling;
@@ -64,8 +62,8 @@ template SMTVerifierLevel() {
     proofHash.L <== switcher.outL;
     proofHash.R <== switcher.outR;
 
-    aux[0] <== proofHash.out * st_top;
-    aux[1] <== old1leaf*st_iold;
+    aux[0] <== proofHash.out * st.top;
+    aux[1] <== old1leaf*st.iold;
 
-    root <== aux[0] + aux[1] + new1leaf*st_inew;
+    root <== aux[0] + aux[1] + new1leaf*st.inew;
 }

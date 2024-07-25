@@ -5,7 +5,8 @@ include "../../circuits/montgomery.circom";
 template Main(){
     Point input a;
     Point output out;
-    out <== MontgomeryDouble()(MontgomeryBabyCheck()(a));
+    Point {babymontgomery} a_aux <== a;
+    out <== MontgomeryDouble()(a_aux);
 }
 
 
