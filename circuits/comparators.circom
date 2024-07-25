@@ -44,10 +44,6 @@ template IsZero() {
 
     out <== -in*inv +1;
     in*out === 0;
-    var aux = in * out;
-    Point p;
-    p.x <== 3;
-    p.y <== 5;
 }
 
 
