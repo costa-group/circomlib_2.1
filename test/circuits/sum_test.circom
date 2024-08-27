@@ -13,7 +13,7 @@ template A() {
     component n2ba = Num2Bits(32);
     component n2bb = Num2Bits(32);
     component sum = BinSum(32,2);
-    component b2n = Bits2Num(33); // TODO: we do not detect error when size is 32 -> careful analysis when assigning buses
+    component b2n = Bits2Num(33); 
 
     n2ba.in <== a;
     n2bb.in <== b;
