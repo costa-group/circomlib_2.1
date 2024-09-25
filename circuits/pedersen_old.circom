@@ -21,8 +21,8 @@ pragma circom 2.0.0;
 include "escalarmul.circom";
 
 template Pedersen(n) {
-    signal input in[n];
-    signal output out[2];
+    input signal in[n];
+    output signal out[2];
 
     var nexps = ((n-1) \ 250) + 1;
     var nlastbits = n - (nexps-1)*250;

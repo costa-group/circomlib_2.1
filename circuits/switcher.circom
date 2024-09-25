@@ -28,11 +28,11 @@
 pragma circom 2.0.0;
 
 template Switcher() {
-    signal input sel;
-    signal input L;
-    signal input R;
-    signal output outL;
-    signal output outR;
+    input signal sel;
+    input signal L;
+    input signal R;
+    output signal outL;
+    output signal outR;
 
     signal aux;
 

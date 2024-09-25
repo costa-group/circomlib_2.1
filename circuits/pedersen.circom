@@ -23,10 +23,10 @@ include "mux3.circom";
 include "babyjub.circom";
 
 template Window4() {
-    signal input in[4];
-    signal input base[2];
-    signal output out[2];
-    signal output out8[2];   // Returns 8*Base (To be linked)
+    input signal in[4];
+    input signal base[2];
+    output signal out[2];
+    output signal out8[2];   // Returns 8*Base (To be linked)
 
     component mux = MultiMux3(2);
 
@@ -110,9 +110,9 @@ template Window4() {
 
 
 template Segment(nWindows) {
-    signal input in[nWindows*4];
-    signal input base[2];
-    signal output out[2];
+    input signal in[nWindows*4];
+    input signal base[2];
+    output signal out[2];
 
     var i;
     var j;
@@ -174,8 +174,8 @@ template Segment(nWindows) {
 }
 
 template Pedersen(n) {
-    signal input in[n];
-    signal output out[2];
+    input signal in[n];
+    output signal out[2];
 
     var BASE[10][2] = [
         [10457101036533406547632367118273992217979173478358440826365724437999023779287,19824078218392094440610104313265183977899662750282163392862422243483260492317],

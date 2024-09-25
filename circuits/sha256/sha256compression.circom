@@ -27,9 +27,9 @@ include "sha256compression_function.circom";
 
 
 template Sha256compression() {
-    signal input hin[256];
-    signal input inp[512];
-    signal output out[256];
+    input signal hin[256];
+    input signal inp[512];
+    output signal out[256];
     signal a[65][32];
     signal b[65][32];
     signal c[65][32];

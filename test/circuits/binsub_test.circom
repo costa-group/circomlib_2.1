@@ -4,9 +4,9 @@ include "../../circuits/bitify.circom";
 include "../../circuits/binsub.circom";
 
 template A() {
-    signal input a; //private
-    signal input b;
-    signal output out;
+    input signal a; //private
+    input signal b;
+    output signal out;
 
     var i;
 

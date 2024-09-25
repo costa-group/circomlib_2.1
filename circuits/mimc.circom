@@ -19,9 +19,9 @@
 pragma circom 2.0.0;
 
 template MiMC7(nrounds) {
-    signal input x_in;
-    signal input k;
-    signal output out;
+    input signal x_in;
+    input signal k;
+    output signal out;
 
     var c[91] = [
         0,
@@ -137,9 +137,9 @@ template MiMC7(nrounds) {
 }
 
 template MultiMiMC7(nInputs, nRounds) {
-    signal input in[nInputs];
-    signal input k;
-    signal output out;
+    input signal in[nInputs];
+    input signal k;
+    output signal out;
     signal r[nInputs +1];
 
     component mims[nInputs];

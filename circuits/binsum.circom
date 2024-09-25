@@ -64,8 +64,8 @@ function nbits(a) {
 
 template BinSum(n, ops) {
     var nout = nbits((2**n -1)*ops);
-    signal input in[ops][n];
-    signal output out[nout];
+    input signal in[ops][n];
+    output signal out[nout];
 
     var lin = 0;
     var lout = 0;

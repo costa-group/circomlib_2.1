@@ -93,24 +93,24 @@ fnc[0]  fnc[1]
 pragma circom 2.0.0;
 
 template SMTProcessorSM() {
-  signal input xor;
-  signal input is0;
-  signal input levIns;
-  signal input fnc[2];
+  input signal xor;
+  input signal is0;
+  input signal levIns;
+  input signal fnc[2];
 
-  signal input prev_top;
-  signal input prev_old0;
-  signal input prev_bot;
-  signal input prev_new1;
-  signal input prev_na;
-  signal input prev_upd;
+  input signal prev_top;
+  input signal prev_old0;
+  input signal prev_bot;
+  input signal prev_new1;
+  input signal prev_na;
+  input signal prev_upd;
 
-  signal output st_top;
-  signal output st_old0;
-  signal output st_bot;
-  signal output st_new1;
-  signal output st_na;
-  signal output st_upd;
+  output signal st_top;
+  output signal st_old0;
+  output signal st_bot;
+  output signal st_new1;
+  output signal st_na;
+  output signal st_upd;
 
   signal aux1;
   signal aux2;

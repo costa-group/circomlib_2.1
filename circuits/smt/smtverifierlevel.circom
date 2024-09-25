@@ -39,18 +39,18 @@ H' is the Hash function with the inputs shifted acordingly.
 pragma circom 2.0.0;
 
 template SMTVerifierLevel() {
-    signal input st_top;
-    signal input st_i0;
-    signal input st_iold;
-    signal input st_inew;
-    signal input st_na;
+    input signal st_top;
+    input signal st_i0;
+    input signal st_iold;
+    input signal st_inew;
+    input signal st_na;
 
-    signal output root;
-    signal input sibling;
-    signal input old1leaf;
-    signal input new1leaf;
-    signal input lrbit;
-    signal input child;
+    output signal root;
+    input signal sibling;
+    input signal old1leaf;
+    input signal new1leaf;
+    input signal lrbit;
+    input signal child;
 
     signal aux[2];
 

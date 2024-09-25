@@ -23,7 +23,7 @@ include "compconstant.circom";
 
 template AliasCheck() {
 
-    signal input in[254];
+    input signal in[254];
 
     component  compConstant = CompConstant(-1);
 

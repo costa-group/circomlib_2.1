@@ -4,9 +4,9 @@ include "../../circuits/escalarmulany.circom";
 include "../../circuits/bitify.circom";
 
 template Main() {
-    signal input e;
-    signal input p[2];
-    signal output out[2];
+    input signal e;
+    input signal p[2];
+    output signal out[2];
 
     component n2b = Num2Bits(253);
     component escalarMulAny = EscalarMulAny(253);

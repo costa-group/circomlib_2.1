@@ -22,12 +22,12 @@ include "bitify.circom";
 include "escalarmulfix.circom";
 
 template BabyAdd() {
-    signal input x1;
-    signal input y1;
-    signal input x2;
-    signal input y2;
-    signal output xout;
-    signal output yout;
+    input signal x1;
+    input signal y1;
+    input signal x2;
+    input signal y2;
+    output signal xout;
+    output signal yout;
 
     signal beta;
     signal gamma;
@@ -50,10 +50,10 @@ template BabyAdd() {
 }
 
 template BabyDbl() {
-    signal input x;
-    signal input y;
-    signal output xout;
-    signal output yout;
+    input signal x;
+    input signal y;
+    output signal xout;
+    output signal yout;
 
     component adder = BabyAdd();
     adder.x1 <== x;
@@ -67,8 +67,8 @@ template BabyDbl() {
 
 
 template BabyCheck() {
-    signal input x;
-    signal input y;
+    input signal x;
+    input signal y;
 
     signal x2;
     signal y2;
@@ -84,9 +84,9 @@ template BabyCheck() {
 
 // Extracts the public key from private key
 template BabyPbk() {
-    signal input  in;
-    signal output Ax;
-    signal output Ay;
+    input signal  in;
+    output signal Ax;
+    output signal Ay;
 
     var BASE8[2] = [
         5299619240641551281634865583518297030282874472190772894086521144482721001553,

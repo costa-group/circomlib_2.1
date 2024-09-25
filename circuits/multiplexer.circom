@@ -63,9 +63,9 @@ function log2(a) {
 pragma circom 2.0.0;
 
 template EscalarProduct(w) {
-    signal input in1[w];
-    signal input in2[w];
-    signal output out;
+    input signal in1[w];
+    input signal in2[w];
+    output signal out;
     signal aux[w];
     var lc = 0;
     for (var i=0; i<w; i++) {
@@ -76,9 +76,9 @@ template EscalarProduct(w) {
 }
 
 template Decoder(w) {
-    signal input inp;
-    signal output out[w];
-    signal output success;
+    input signal inp;
+    output signal out[w];
+    output signal success;
     var lc=0;
 
     for (var i=0; i<w; i++) {
@@ -93,9 +93,9 @@ template Decoder(w) {
 
 
 template Multiplexer(wIn, nIn) {
-    signal input inp[nIn][wIn];
-    signal input sel;
-    signal output out[wIn];
+    input signal inp[nIn][wIn];
+    input signal sel;
+    output signal out[wIn];
     component dec = Decoder(nIn);
     component ep[wIn];
 

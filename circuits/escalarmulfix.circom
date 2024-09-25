@@ -43,13 +43,13 @@ include "babyjub.circom";
     substraction that it's done in montgomery.
 
     A good way to see it is that the accumulator input of the adder >= 2^247*B and the other input
-    is the output of the windows that it's going to be <= 2^246*B
+    is output the of the windows that it's going to be <= 2^246*B
  */
 template WindowMulFix() {
-    signal input in[3];
-    signal input base[2];
-    signal output out[2];
-    signal output out8[2];   // Returns 8*Base (To be linked)
+    input signal in[3];
+    input signal base[2];
+    output signal out[2];
+    output signal out8[2];   // Returns 8*Base (To be linked)
 
     component mux = MultiMux3(2);
 
@@ -142,10 +142,10 @@ template WindowMulFix() {
  */
 
 template SegmentMulFix(nWindows) {
-    signal input e[nWindows*3];
-    signal input base[2];
-    signal output out[2];
-    signal output dbl[2];
+    input signal e[nWindows*3];
+    input signal base[2];
+    output signal out[2];
+    output signal dbl[2];
 
     var i;
     var j;
@@ -233,8 +233,8 @@ This component multiplies a escalar times a fixed point BASE (twisted edwards fo
         out: The output point in twisted edwards
  */
 template EscalarMulFix(n, BASE) {
-    signal input e[n];              // Input in binary format
-    signal output out[2];           // Point (Twisted format)
+    input signal e[n];              // Input in binary format
+    output signal out[2];           // Point (Twisted format)
 
     var nsegments = (n-1)\246 +1;       // 249 probably would work. But I'm not sure and for security I keep 246
     var nlastsegment = n - (nsegments-1)*249;

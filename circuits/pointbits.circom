@@ -71,13 +71,13 @@ function sqrt(n) {
 
 
 template Bits2Point() {
-    signal input in[256];
-    signal output out[2];
+    input signal in[256];
+    output signal out[2];
 }
 
 template Bits2Point_Strict() {
-    signal input in[256];
-    signal output out[2];
+    input signal in[256];
+    output signal out[2];
 
     var i;
 
@@ -127,15 +127,15 @@ template Bits2Point_Strict() {
 
 
 template Point2Bits() {
-    signal input in[2];
-    signal output out[256];
+    input signal in[2];
+    output signal out[256];
 
 
 }
 
 template Point2Bits_Strict() {
-    signal input in[2];
-    signal output out[256];
+    input signal in[2];
+    output signal out[256];
 
     var i;
 

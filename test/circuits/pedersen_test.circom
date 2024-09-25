@@ -5,8 +5,8 @@ include "../../circuits/bitify.circom";
 
 
 template Main() {
-    signal input in[2];
-    signal output out[2];
+    input signal in[2];
+    output signal out[2];
 
     component pedersen = Pedersen(250*2);
 

@@ -22,8 +22,8 @@ include "bitify.circom";
 include "binsum.circom";
 
 template IsZero() {
-    signal input in;
-    signal output out;
+    input signal in;
+    output signal out;
 
     signal inv;
 
@@ -35,8 +35,8 @@ template IsZero() {
 
 
 template IsEqual() {
-    signal input in[2];
-    signal output out;
+    input signal in[2];
+    output signal out;
 
     component isz = IsZero();
 
@@ -46,8 +46,8 @@ template IsEqual() {
 }
 
 template ForceEqualIfEnabled() {
-    signal input enabled;
-    signal input in[2];
+    input signal enabled;
+    input signal in[2];
 
     component isz = IsZero();
 
@@ -60,8 +60,8 @@ template ForceEqualIfEnabled() {
 // N is the number of bits the input  have.
 // The MSF is the sign bit.
 template LessThan(n) {
-    signal input in[2];
-    signal output out;
+    input signal in[2];
+    output signal out;
 
     component num2Bits0;
     component num2Bits1;
@@ -88,8 +88,8 @@ template LessThan(n) {
 
 template LessThan(n) {
     assert(n <= 252);
-    signal input in[2];
-    signal output out;
+    input signal in[2];
+    output signal out;
 
     component n2b = Num2Bits(n+1);
 
@@ -103,8 +103,8 @@ template LessThan(n) {
 // N is the number of bits the input  have.
 // The MSF is the sign bit.
 template LessEqThan(n) {
-    signal input in[2];
-    signal output out;
+    input signal in[2];
+    output signal out;
 
     component lt = LessThan(n);
 
@@ -116,8 +116,8 @@ template LessEqThan(n) {
 // N is the number of bits the input  have.
 // The MSF is the sign bit.
 template GreaterThan(n) {
-    signal input in[2];
-    signal output out;
+    input signal in[2];
+    output signal out;
 
     component lt = LessThan(n);
 
@@ -129,8 +129,8 @@ template GreaterThan(n) {
 // N is the number of bits the input  have.
 // The MSF is the sign bit.
 template GreaterEqThan(n) {
-    signal input in[2];
-    signal output out;
+    input signal in[2];
+    output signal out;
 
     component lt = LessThan(n);
 

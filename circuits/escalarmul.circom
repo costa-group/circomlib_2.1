@@ -68,9 +68,9 @@ include "babyjub.circom";
 
 template EscalarMulWindow(base, k) {
 
-    signal input in[2];
-    signal input sel[4];
-    signal output out[2];
+    input signal in[2];
+    input signal sel[4];
+    output signal out[2];
 
     var table[16][2];
     component mux;
@@ -126,9 +126,9 @@ template EscalarMulWindow(base, k) {
  */
 
 template EscalarMul(n, base) {
-    signal input in[n];
-    signal input inp[2];   // Point input to be added
-    signal output out[2];
+    input signal in[n];
+    input signal inp[2];   // Point input to be added
+    output signal out[2];
 
     var nBlocks = ((n-1)>>2)+1;
     var i;

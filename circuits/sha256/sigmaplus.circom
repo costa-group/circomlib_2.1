@@ -22,11 +22,11 @@ include "../binsum.circom";
 include "sigma.circom";
 
 template SigmaPlus() {
-    signal input in2[32];
-    signal input in7[32];
-    signal input in15[32];
-    signal input in16[32];
-    signal output out[32];
+    input signal in2[32];
+    input signal in7[32];
+    input signal in15[32];
+    input signal in16[32];
+    output signal out[32];
     var k;
 
     component sigma1 = SmallSigma(17,19,10);

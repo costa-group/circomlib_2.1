@@ -23,8 +23,8 @@ include "aliascheck.circom";
 
 
 template Num2Bits(n) {
-    signal input in;
-    signal output out[n];
+    input signal in;
+    output signal out[n];
     var lc1=0;
 
     var e2=1;
@@ -39,8 +39,8 @@ template Num2Bits(n) {
 }
 
 template Num2Bits_strict() {
-    signal input in;
-    signal output out[254];
+    input signal in;
+    output signal out[254];
 
     component aliasCheck = AliasCheck();
     component n2b = Num2Bits(254);
@@ -53,8 +53,8 @@ template Num2Bits_strict() {
 }
 
 template Bits2Num(n) {
-    signal input in[n];
-    signal output out;
+    input signal in[n];
+    output signal out;
     var lc1=0;
 
     var e2 = 1;
@@ -67,8 +67,8 @@ template Bits2Num(n) {
 }
 
 template Bits2Num_strict() {
-    signal input in[254];
-    signal output out;
+    input signal in[254];
+    output signal out;
 
     component aliasCheck = AliasCheck();
     component b2n = Bits2Num(254);
@@ -82,8 +82,8 @@ template Bits2Num_strict() {
 }
 
 template Num2BitsNeg(n) {
-    signal input in;
-    signal output out[n];
+    input signal in;
+    output signal out[n];
     var lc1=0;
 
     component isZero;

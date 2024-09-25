@@ -4,7 +4,7 @@ include "../../circuits/pointbits.circom";
 
 
 template Main() {
-    signal input in[2];
+    input signal in[2];
 
     var i;
 

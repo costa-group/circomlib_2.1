@@ -4,9 +4,9 @@ pragma circom 2.0.0;
 // log_5(21888242871839275222246405745257275088548364400416034343698204186575808495617) ~= 110
 // => nRounds should be 220
 template MiMCSponge(nInputs, nRounds, nOutputs) {
-  signal input ins[nInputs];
-  signal input k;
-  signal output outs[nOutputs];
+  input signal ins[nInputs];
+  input signal k;
+  output signal outs[nOutputs];
 
   var i;
 
@@ -37,11 +37,11 @@ template MiMCSponge(nInputs, nRounds, nOutputs) {
 }
 
 template MiMCFeistel(nrounds) {
-    signal input xL_in;
-    signal input xR_in;
-    signal input k;
-    signal output xL_out;
-    signal output xR_out;
+    input signal xL_in;
+    input signal xR_in;
+    input signal k;
+    output signal xL_out;
+    output signal xR_out;
 
     // doesn't contain the first and last round constants, which are always zero
     var c_partial[218] = [

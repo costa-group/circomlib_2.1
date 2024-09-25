@@ -6,7 +6,7 @@ include "../../circuits/bitify.circom";
 
 template Constants() {
     var i;
-    signal output out[4];
+    output signal out[4];
 
     out[0] <== 37;
     out[1] <== 47;
@@ -16,8 +16,8 @@ template Constants() {
 
 template Main() {
     var i;
-    signal input selector;//private
-    signal output out;
+    input signal selector;//private
+    output signal out;
 
     component mux = Mux2();
     component n2b = Num2Bits(2);

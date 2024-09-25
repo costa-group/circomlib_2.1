@@ -32,10 +32,10 @@ out = a*( b + c - 2*mid ) + mid
 pragma circom 2.0.0;
 
 template Maj_t(n) {
-    signal input a[n];
-    signal input b[n];
-    signal input c[n];
-    signal output out[n];
+    input signal a[n];
+    input signal b[n];
+    input signal c[n];
+    output signal out[n];
     signal mid[n];
 
     for (var k=0; k<n; k++) {

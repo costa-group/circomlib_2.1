@@ -23,20 +23,20 @@ include "babyjub.circom";
 include "comparators.circom";
 
 template Multiplexor2() {
-    signal input sel;
-    signal input in[2][2];
-    signal output out[2];
+    input signal sel;
+    input signal in[2][2];
+    output signal out[2];
 
     out[0] <== (in[1][0] - in[0][0])*sel + in[0][0];
     out[1] <== (in[1][1] - in[0][1])*sel + in[0][1];
 }
 
 template BitElementMulAny() {
-    signal input sel;
-    signal input dblIn[2];
-    signal input addIn[2];
-    signal output dblOut[2];
-    signal output addOut[2];
+    input signal sel;
+    input signal dblIn[2];
+    input signal addIn[2];
+    output signal dblOut[2];
+    output signal addOut[2];
 
     component doubler = MontgomeryDouble();
     component adder = MontgomeryAdd();
@@ -68,10 +68,10 @@ template BitElementMulAny() {
 // Double is in montgomery to be linked;
 
 template SegmentMulAny(n) {
-    signal input e[n];
-    signal input p[2];
-    signal output out[2];
-    signal output dbl[2];
+    input signal e[n];
+    input signal p[2];
+    output signal out[2];
+    output signal dbl[2];
 
     component bits[n-1];
 
@@ -129,9 +129,9 @@ template SegmentMulAny(n) {
 // This function assumes that p is in the subgroup and it is different to 0
 
 template EscalarMulAny(n) {
-    signal input e[n];              // Input in binary format
-    signal input p[2];              // Point (Twisted format)
-    signal output out[2];           // Point (Twisted format)
+    input signal e[n];              // Input in binary format
+    input signal p[2];              // Point (Twisted format)
+    output signal out[2];           // Point (Twisted format)
 
     var nsegments = (n-1)\148 +1;
     var nlastsegment = n - (nsegments-1)*148;

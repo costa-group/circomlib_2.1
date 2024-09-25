@@ -41,8 +41,8 @@ Main Constraint:
 pragma circom 2.0.0;
 
 template BinSub(n) {
-    signal input in[2][n];
-    signal output out[n];
+    input signal in[2][n];
+    output signal out[n];
 
     signal aux;
 

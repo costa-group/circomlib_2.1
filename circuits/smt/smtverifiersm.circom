@@ -61,21 +61,21 @@ The end of the last level will have to be `na`
 
 
 template SMTVerifierSM() {
-    signal input is0;
-    signal input levIns;
-    signal input fnc;
+    input signal is0;
+    input signal levIns;
+    input signal fnc;
 
-    signal input prev_top;
-    signal input prev_i0;
-    signal input prev_iold;
-    signal input prev_inew;
-    signal input prev_na;
+    input signal prev_top;
+    input signal prev_i0;
+    input signal prev_iold;
+    input signal prev_inew;
+    input signal prev_na;
 
-    signal output st_top;
-    signal output st_i0;
-    signal output st_iold;
-    signal output st_inew;
-    signal output st_na;
+    output signal st_top;
+    output signal st_i0;
+    output signal st_iold;
+    output signal st_inew;
+    output signal st_na;
 
     signal prev_top_lev_ins;
     signal prev_top_lev_ins_fnc;

@@ -4,8 +4,8 @@ include "../../circuits/escalarmul.circom";
 
 
 template Main() {
-    signal input in[256];
-    signal output out[2];
+    input signal in[256];
+    output signal out[2];
 
     var i;
 

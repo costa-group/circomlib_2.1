@@ -28,8 +28,8 @@
  pragma circom 2.0.0;
 
 template Edwards2Montgomery() {
-    signal input in[2];
-    signal output out[2];
+    input signal in[2];
+    output signal out[2];
 
     out[0] <-- (1 + in[1]) / (1 - in[1]);
     out[1] <-- out[0] / in[0];
@@ -47,8 +47,8 @@ template Edwards2Montgomery() {
 
  */
 template Montgomery2Edwards() {
-    signal input in[2];
-    signal output out[2];
+    input signal in[2];
+    output signal out[2];
 
     out[0] <-- in[0] / in[1];
     out[1] <-- (in[0] - 1) / (in[0] + 1);
@@ -87,9 +87,9 @@ template Montgomery2Edwards() {
  */
 
 template MontgomeryAdd() {
-    signal input in1[2];
-    signal input in2[2];
-    signal output out[2];
+    input signal in1[2];
+    input signal in2[2];
+    output signal out[2];
 
     var a = 168700;
     var d = 168696;
@@ -120,8 +120,8 @@ template MontgomeryAdd() {
 
  */
 template MontgomeryDouble() {
-    signal input in[2];
-    signal output out[2];
+    input signal in[2];
+    output signal out[2];
 
     var a = 168700;
     var d = 168696;

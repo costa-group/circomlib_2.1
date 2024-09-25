@@ -23,8 +23,8 @@ include "bitify.circom";
 // Returns 1 if in (in binary) > ct
 
 template CompConstant(ct) {
-    signal input in[254];
-    signal output out;
+    input signal in[254];
+    output signal out;
 
     signal parts[127];
     signal sout;

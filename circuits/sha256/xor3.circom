@@ -32,10 +32,10 @@ out = a*( 1 - 2*b -2*c + 4*mid ) + b + c - 2 * mid
 pragma circom 2.0.0;
 
 template Xor3(n) {
-    signal input a[n];
-    signal input b[n];
-    signal input c[n];
-    signal output out[n];
+    input signal a[n];
+    input signal b[n];
+    input signal c[n];
+    output signal out[n];
     signal mid[n];
 
     for (var k=0; k<n; k++) {

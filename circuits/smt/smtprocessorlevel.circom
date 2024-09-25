@@ -42,21 +42,21 @@ pragma circom 2.0.0;
 
 
 template SMTProcessorLevel() {
-    signal input st_top;
-    signal input st_old0;
-    signal input st_bot;
-    signal input st_new1;
-    signal input st_na;
-    signal input st_upd;
+    input signal st_top;
+    input signal st_old0;
+    input signal st_bot;
+    input signal st_new1;
+    input signal st_na;
+    input signal st_upd;
 
-    signal output oldRoot;
-    signal output newRoot;
-    signal input sibling;
-    signal input old1leaf;
-    signal input new1leaf;
-    signal input newlrbit;
-    signal input oldChild;
-    signal input newChild;
+    output signal oldRoot;
+    output signal newRoot;
+    input signal sibling;
+    input signal old1leaf;
+    input signal new1leaf;
+    input signal newlrbit;
+    input signal oldChild;
+    input signal newChild;
 
     signal aux[4];
 
