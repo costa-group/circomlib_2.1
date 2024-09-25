@@ -2,12 +2,12 @@ pragma circom 2.1.5;
 include "../../circuits/babyjub.circom";
 
 template Main(){
-    Point input a;
-    Point input b;
-    //Point output out <== BabyAdd()(BabyCheck()(a), BabyCheck()(b));
+    input Point a;
+    input Point b;
+    //output Point out <== BabyAdd()(BabyCheck()(a), BabyCheck()(b));
     Point {babyedwards} a_aux <== a;
     Point {babyedwards} b_aux <== b;
-    Point output out <== BabyAdd()(a_aux, b_aux);
+    output Point out <== BabyAdd()(a_aux, b_aux);
 }
 
 

@@ -38,18 +38,18 @@ include "../buses.circom";
  */
 
 template MultiplexorEdwards2() {
-    signal input {binary} sel;
-    Point input {babyedwards} pin[2];
-    Point output {babyedwards} pout;
+    input signal {binary} sel;
+    input Point {babyedwards} pin[2];
+    output Point {babyedwards} pout;
 
     pout.x <== (pin[1].x - pin[0].x)*sel + pin[0].x;
     pout.y <== (pin[1].y - pin[0].y)*sel + pin[0].y;
 }
 
 template MultiplexorMontgomery2() {
-    signal input {binary} sel;
-    Point input {babymontgomery} pin[2];
-    Point output {babymontgomery} pout;
+    input signal {binary} sel;
+    input Point {babymontgomery} pin[2];
+    output Point {babymontgomery} pout;
 
     pout.x <== (pin[1].x - pin[0].x)*sel + pin[0].x;
     pout.y <== (pin[1].y - pin[0].y)*sel + pin[0].y;
@@ -75,11 +75,11 @@ template MultiplexorMontgomery2() {
 */
 
 template BitElementMulAny() {
-    signal input {binary} sel;
-    Point input {babymontgomery} dblIn;
-    Point input {babymontgomery} addIn;
-    Point output {babymontgomery} dblOut;
-    Point output {babymontgomery} addOut;
+    input signal {binary} sel;
+    input Point {babymontgomery} dblIn;
+    input Point {babymontgomery} addIn;
+    output Point {babymontgomery} dblOut;
+    output Point {babymontgomery} addOut;
 
     component doubler = MontgomeryDouble();
     component adder = MontgomeryAdd();
@@ -113,10 +113,10 @@ TODO: ADD SCHEME
 */
 
 template SegmentMulAny(n) {
-    signal input {binary}  e[n];
-    Point input {babyedwards} pin;
-    Point output {babyedwards} pout;
-    Point output {babymontgomery} dbl;
+    input signal {binary}  e[n];
+    input Point {babyedwards} pin;
+    output Point {babyedwards} pout;
+    output Point {babymontgomery} dbl;
 
     component bits[n-1];
 
@@ -177,9 +177,9 @@ TODO: ADD SCHEME
 */
 
 template EscalarMulAny(n) {
-    signal input {binary} e[n];              // Input in binary format
-    Point input {babyedwards} pin;              // Point (Twisted format)
-    Point output {babyedwards} pout;           // Point (Twisted format)
+    input signal {binary} e[n];              // Input in binary format
+    input Point {babyedwards} pin;              // Point (Twisted format)
+    output Point {babyedwards} pout;           // Point (Twisted format)
 
     var nsegments = (n-1)\148 +1;
     var nlastsegment = n - (nsegments-1)*148;

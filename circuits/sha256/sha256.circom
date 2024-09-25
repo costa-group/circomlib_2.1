@@ -4,8 +4,8 @@ include "constants.circom";
 include "sha256compression.circom";
 
 template Sha256(nBits) {
-    signal input {binary} in[nBits];
-    signal  output {binary} out[256];
+    input signal {binary} in[nBits];
+    output signal {binary} out[256];
 
     var i;
     var k;

@@ -5,8 +5,8 @@ include "../../circuits/tags-managing.circom";
 
 
 template Main() {
-    signal input a[448]; //private
-    signal output out[256];
+    input signal a[448]; //private
+    output signal out[256];
 
     component sha256_2 = Sha256(448);
 

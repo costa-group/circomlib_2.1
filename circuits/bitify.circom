@@ -36,8 +36,8 @@ include "buses.circom";
 */
 
 template Num2Bits(n) {
-    signal input in;
-    signal output {binary} out[n];
+    input signal in;
+    output signal {binary} out[n];
     var lc1=0;
 
     var e2=1;
@@ -63,8 +63,8 @@ template Num2Bits(n) {
 */
 
 template Num2Bits_strict() {
-    signal input in;
-    signal output {binary} out[254];
+    input signal in;
+    output signal {binary} out[254];
 
     component aliasCheck = AliasCheck();
     component n2b = Num2Bits(254);
@@ -88,8 +88,8 @@ template Num2Bits_strict() {
 
 
 template Bits2Num(n) {
-    signal input {binary} in[n];
-    signal output {maxbit} out;
+    input signal {binary} in[n];
+    output signal {maxbit} out;
     var lc1=0;
 
     var e2 = 1;
@@ -115,8 +115,8 @@ template Bits2Num(n) {
 */
 
 template Bits2Num_strict() {
-    signal input {binary} in[254];
-    signal output {maxbit} out;
+    input signal {binary} in[254];
+    output signal {maxbit} out;
 
     component aliasCheck = AliasCheck();
     component b2n = Bits2Num(254);
@@ -140,8 +140,8 @@ template Bits2Num_strict() {
 */
 
 template Num2BitsNeg(n) {
-    signal input in;
-    signal output {binary} out[n];
+    input signal in;
+    output signal {binary} out[n];
     var lc1=0;
 
     component isZero;

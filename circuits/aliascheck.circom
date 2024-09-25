@@ -37,7 +37,7 @@ include "buses.circom";
 
 template AliasCheck() {
 
-    signal input {binary} in[254];
+    input signal {binary} in[254];
 
     component  compConstant = CompConstant(-1);
 

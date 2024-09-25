@@ -43,13 +43,13 @@ include "buses.circom";
 
 
 template EdDSAPoseidonVerifier() {
-    signal input {binary} enabled;
-    Point input {babyedwards} A;
+    input signal {binary} enabled;
+    input Point {babyedwards} A;
 
-    signal input S;
-    Point input {babyedwards} R8;
+    input signal S;
+    input Point {babyedwards} R8;
 
-    signal input M;
+    input signal M;
 
     var i;
 

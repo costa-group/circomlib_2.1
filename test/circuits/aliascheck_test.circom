@@ -4,7 +4,7 @@ include "../../circuits/tags-managing.circom";
 
 
 template Main(){
-    signal input in[254];
+    input signal in[254];
     
     component ac = AliasCheck();
     ac.in <== BinaryCheckArray(254)(in);

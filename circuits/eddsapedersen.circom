@@ -43,11 +43,11 @@ include "escalarmul/escalarmulfix.circom";
 
 
 template EdDSAPedersenVerifier(n) {
-    signal input {binary} msg[n];
+    input signal {binary} msg[n];
 
     BinaryPoint(254) input A;
     BinaryPoint(254) input R8;
-    signal input {binary} S[254];
+    input signal {binary} S[254];
 
     Point pA;
 

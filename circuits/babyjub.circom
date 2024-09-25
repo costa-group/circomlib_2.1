@@ -68,8 +68,8 @@ include "escalarmul/escalarmulfix.circom";
 */
 
 template BabyAdd() {
-    Point input {babyedwards} pin1,pin2;
-    Point output {babyedwards} pout;
+    input Point {babyedwards} pin1,pin2;
+    output Point {babyedwards} pout;
 
     signal beta;
     signal gamma;
@@ -103,8 +103,8 @@ template BabyAdd() {
 */
 
 template BabyDbl() {
-    Point input {babyedwards} pin;
-    Point output {babyedwards} pout;
+    input Point {babyedwards} pin;
+    output Point {babyedwards} pout;
 
     component adder = BabyAdd();
 
@@ -127,8 +127,8 @@ template BabyDbl() {
 
 
 template BabyCheck() {
-    Point input pin;
-    Point output {babyedwards} pout;
+    input Point pin;
+    output Point {babyedwards} pout;
 
     // Point p2;
     signal x2;
@@ -159,8 +159,8 @@ This template is used to extract the public key from the private key.
 */
 
 template BabyPbk() {
-    signal input {minvalue, maxvalue} in;
-    Point output {babyedwards} A;
+    input signal {minvalue, maxvalue} in;
+    output Point {babyedwards} A;
 
 
     var r = 2736030358979909402780800718157159386076813972158567259200215660948447373041;

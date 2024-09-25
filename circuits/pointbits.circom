@@ -94,7 +94,7 @@ function sqrt(n) {
 
 template Bits2Point_Strict() {
     BinaryPoint(254) input in;
-    Point output pout;
+    output Point pout;
 
     var i;
 
@@ -147,7 +147,7 @@ template Bits2Point_Strict() {
 */
 
 template Point2Bits_Strict() {
-    Point input pin;
+    input Point pin;
     BinaryPoint(254) output out;
 
     var i;

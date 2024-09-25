@@ -40,11 +40,11 @@ pragma circom 2.1.5;
  */
 
 template Switcher() {
-    signal input {binary} sel;
-    signal input L;
-    signal input R;
-    signal output outL;
-    signal output outR;
+    input signal {binary} sel;
+    input signal L;
+    input signal R;
+    output signal outL;
+    output signal outR;
 
     signal aux;
 

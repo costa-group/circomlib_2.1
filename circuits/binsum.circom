@@ -61,7 +61,7 @@ function nbits(a) {
         ===
         out[0] * 2^0  + out[1] * 2^1 +   + out[n+e-1] *2(n+e-1)
 
-    To waranty binary outputs:
+    To waranty output binarys:
 
         out[0]     * (out[0] - 1) === 0
         out[1]     * (out[0] - 1) === 0
@@ -74,8 +74,8 @@ function nbits(a) {
 
 template BinSum(n, ops) {
     var nout = nbits((2**n -1)*ops);
-    signal input {binary} in[ops][n];
-    signal output {binary} out[nout];
+    input signal {binary} in[ops][n];
+    output signal {binary} out[nout];
 
     var lin = 0;
     var lout = 0;

@@ -5,11 +5,11 @@ include "../../circuits/tags-managing.circom";
 
 
 template A(n){
-    signal input msg[n];
+    input signal msg[n];
 
-    signal input A[256];
-    signal input R8[256];
-    signal input S[256];
+    input signal A[256];
+    input signal R8[256];
+    input signal S[256];
 
     signal {binary} msg_aux[n] <==  BinaryCheckArray(n)(msg);
     signal {binary} A_aux[256] <==  BinaryCheckArray(256)(A);

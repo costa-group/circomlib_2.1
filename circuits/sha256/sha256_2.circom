@@ -23,9 +23,9 @@ include "sha256compression.circom";
 include "../bitify.circom";
 
 template Sha256_2() {
-    signal input a;
-    signal input b;
-    signal output {maxbit} out;
+    input signal a;
+    input signal b;
+    output signal {maxbit} out;
 
     var i;
     var k;

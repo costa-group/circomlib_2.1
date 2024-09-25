@@ -37,9 +37,9 @@ pragma circom 2.1.5;
  */
 
 template MultiMux1(n) {
-    signal input c[n][2];  // Constants
-    signal input {binary} s;   // Selector
-    signal output out[n];
+    input signal c[n][2];  // Constants
+    input signal {binary} s;   // Selector
+    output signal out[n];
 
     for (var i=0; i<n; i++) {
 
@@ -66,9 +66,9 @@ template MultiMux1(n) {
 
 template Mux1() {
     var i;
-    signal input c[2];  // Constants
-    signal input {binary} s;   // Selector
-    signal output out;
+    input signal c[2];  // Constants
+    input signal {binary} s;   // Selector
+    output signal out;
 
     component mux = MultiMux1(1);
 

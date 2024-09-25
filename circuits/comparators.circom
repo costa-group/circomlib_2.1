@@ -35,8 +35,8 @@ include "buses.circom";
 */
 
 template IsZero() {
-    signal input in;
-    signal output {binary} out;
+    input signal in;
+    output signal {binary} out;
 
     signal inv;
 
@@ -59,8 +59,8 @@ template IsZero() {
 */
 
 template IsEqual() {
-    signal input in[2];
-    signal output {binary} out;
+    input signal in[2];
+    output signal {binary} out;
 
     component isz = IsZero();
 
@@ -82,8 +82,8 @@ template IsEqual() {
 */
 
 template ForceEqualIfEnabled() {
-    signal  input {binary} enabled;
-    signal input in[2];
+    input signal {binary} enabled;
+    input signal in[2];
 
     component isz = IsZero();
 
@@ -108,8 +108,8 @@ template ForceEqualIfEnabled() {
 
 template LessThan(n) {
     assert(n <= 252);
-    signal input {maxbit} in[2];
-    signal output {binary} out;
+    input signal {maxbit} in[2];
+    output signal {binary} out;
     
     assert(in.maxbit <= n);
 
@@ -134,8 +134,8 @@ template LessThan(n) {
 */
 
 template LessEqThan(n){
-    signal input {maxbit} in[2];
-    signal output {binary} out;
+    input signal {maxbit} in[2];
+    output signal {binary} out;
     assert(in.maxbit <= n);
 
     component gt = GreaterThan(n);
@@ -162,8 +162,8 @@ template LessEqThan(n){
 
 
 template GreaterThan(n) {
-    signal input {maxbit} in[2];
-    signal output {binary} out;
+    input signal {maxbit} in[2];
+    output signal {binary} out;
     
     assert(in.maxbit <= n);
 
@@ -189,8 +189,8 @@ template GreaterThan(n) {
 */
 
 template GreaterEqThan(n) {
-    signal input {maxbit} in[2];
-    signal output {binary} out;
+    input signal {maxbit} in[2];
+    output signal {binary} out;
     
     assert(in.maxbit <= n);
 
@@ -214,8 +214,8 @@ template GreaterEqThan(n) {
 */
 
 template Sign() {
-    signal input {binary} in[254];
-    signal output {binary} sign;
+    input signal {binary} in[254];
+    output signal {binary} sign;
 
     component comp = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
 
@@ -240,8 +240,8 @@ template Sign() {
 */
 
 template CompConstant(ct) {
-    signal input {binary} in[254];
-    signal output {binary} out;
+    input signal {binary} in[254];
+    output signal {binary} out;
 
     signal parts[127];
     signal sout;

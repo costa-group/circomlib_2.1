@@ -4,9 +4,9 @@ include "../../circuits/escalarmul/escalarmulany.circom";
 include "../../circuits/bitify.circom";
 
 template Main() {
-    signal input e;
-    Point input p;
-    Point output {babyedwards} pout;
+    input signal e;
+    input Point p;
+    output Point {babyedwards} pout;
     
     Point checked_p <== BabyCheck()(p);
 

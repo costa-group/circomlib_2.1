@@ -57,10 +57,10 @@ include "../buses.circom";
  */
  
 template WindowMulFix() {
-    signal input {binary} in[3];
-    Point input {babymontgomery} base;
-    Point output {babymontgomery} pout;
-    Point output {babymontgomery} pout8;   // Returns 8*Base (To be linked)
+    input signal {binary} in[3];
+    input Point {babymontgomery} base;
+    output Point {babymontgomery} pout;
+    output Point {babymontgomery} pout8;   // Returns 8*Base (To be linked)
 
     component mux = MultiMux3(2);
 
@@ -141,10 +141,10 @@ template WindowMulFix() {
  */
 
 template SegmentMulFix(nWindows) {
-    signal input {binary} e[nWindows*3];
-    Point input {babyedwards} base;
-    Point output {babyedwards} pout;
-    Point output {babymontgomery} dbl;
+    input signal {binary} e[nWindows*3];
+    input Point {babyedwards} base;
+    output Point {babyedwards} pout;
+    output Point {babymontgomery} dbl;
 
     var i;
     var j;
@@ -223,8 +223,8 @@ template SegmentMulFix(nWindows) {
  
  
 template EscalarMulFix(n, BASE) {
-    signal input {binary} e[n];              // Input in binary format
-    Point output {babyedwards} pout;           // Point (Twisted format)
+    input signal {binary} e[n];              // Input in binary format
+    output Point {babyedwards} pout;           // Point (Twisted format)
 
     var nsegments = (n-1)\246 +1;       // 249 probably would work. But I'm not sure and for security I keep 246
     var nlastsegment = n - (nsegments-1)*249;
