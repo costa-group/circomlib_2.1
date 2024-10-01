@@ -215,6 +215,8 @@ template Pedersen(n) {
     var nBits;
     var nWindows;
     Point {babyedwards} aux[nSegments];
+    
+    signal {binary} aux_0 <== 0;
     for (i=0; i<nSegments; i++) {
         nBits = (i == (nSegments-1)) ? n - (nSegments-1)*200 : 200;
         nWindows = ((nBits - 1)\4)+1;
@@ -227,7 +229,7 @@ template Pedersen(n) {
         }
         // Fill padding bits
         for (j = nBits; j < nWindows*4; j++) {
-            segments[i].in[j] <== 0;
+            segments[i].in[j] <== aux_0;
         }
     }
 
