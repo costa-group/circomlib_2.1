@@ -4,15 +4,15 @@ include "../../circuits/smt/smtverifier.circom";
 include "../../circuits/tags-managing.circom";
 
 template SMTVerifier_main(nLevels) {
-    signal input enabled;
-    signal input root;
-    signal input siblings[nLevels];
-    signal input oldKey;
-    signal input oldValue;
-    signal input isOld0;
-    signal input key;
-    signal input value;
-    signal input fnc;
+    input signal enabled;
+    input signal root;
+    input signal siblings[nLevels];
+    input signal oldKey;
+    input signal oldValue;
+    input signal isOld0;
+    input signal key;
+    input signal value;
+    input signal fnc;
 
     SMTVerifier(nLevels)(BinaryCheck()(enabled), root, siblings, oldKey, oldValue, 
                         BinaryCheck()(isOld0), key, value,

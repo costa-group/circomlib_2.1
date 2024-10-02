@@ -94,14 +94,14 @@ pragma circom 2.0.0;
 include "smtbuses.circom";
 
 template SMTProcessorSM() {
-  signal input {binary} xor;
-  signal input {binary} is0;
-  signal input {binary} levIns;
-  signal input {binary} fnc[2];
+  input signal {binary} xor;
+  input signal {binary} is0;
+  input signal {binary} levIns;
+  input signal {binary} fnc[2];
 
-  SMTProcessorState input prev; 
+  input SMTProcessorState prev; 
 
-  SMTProcessorState output st; 
+  output SMTProcessorState st; 
 
   signal aux1;
   signal aux2;

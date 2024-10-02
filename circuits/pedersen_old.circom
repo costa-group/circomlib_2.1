@@ -33,8 +33,8 @@ include "buses.circom";
  */
 
 template Pedersen(n) {
-    signal input {binary} in[n];
-    Point output {babyedwards} pout;
+    input signal {binary} in[n];
+    output Point {babyedwards} pout;
 
     var nexps = ((n-1) \ 250) + 1;
     var nlastbits = n - (nexps-1)*250;

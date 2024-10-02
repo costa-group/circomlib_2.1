@@ -39,15 +39,15 @@ include "smtverifiersm.circom";
 include "smthash_poseidon.circom";
 
 template SMTVerifier(nLevels) {
-    signal input {binary} enabled;
-    signal input root;
-    signal input siblings[nLevels];
-    signal input oldKey;
-    signal input oldValue;
-    signal input {binary} isOld0;
-    signal input key;
-    signal input value;
-    signal input {binary} fnc;
+    input signal {binary} enabled;
+    input signal root;
+    input signal siblings[nLevels];
+    input signal oldKey;
+    input signal oldValue;
+    input signal {binary} isOld0;
+    input signal key;
+    input signal value;
+    input signal {binary} fnc;
 
     var i;
 

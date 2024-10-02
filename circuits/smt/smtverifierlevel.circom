@@ -41,14 +41,14 @@ pragma circom 2.1.9;
 include "smtbuses.circom";
 
 template SMTVerifierLevel() {
-    SMTVerifierState input st;
+    input SMTVerifierState st;
 
-    signal output root;
-    signal input sibling;
-    signal input old1leaf;
-    signal input new1leaf;
-    signal input {binary} lrbit;
-    signal input child;
+    output signal root;
+    input signal sibling;
+    input signal old1leaf;
+    input signal new1leaf;
+    input signal {binary} lrbit;
+    input signal child;
 
     signal aux[2];
 

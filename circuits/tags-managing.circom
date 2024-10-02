@@ -39,8 +39,8 @@ include "bitify.circom";
 */
 
 template BinaryCheck () {
-    signal input in;
-    signal output {binary} out;
+    input signal in;
+    output signal {binary} out;
 
     in * (in - 1) === 0;
     out <== in;
@@ -59,8 +59,8 @@ template BinaryCheck () {
 */
 
 template BinaryCheckArray(n) {
-    signal input in[n];
-    signal output {binary} out[n];
+    input signal in[n];
+    output signal {binary} out[n];
 
     for (var i = 0; i < n; i++) {
     	out[i] <== BinaryCheck()(in[i]);
@@ -81,8 +81,8 @@ template BinaryCheckArray(n) {
 */
 
 template MaxbitCheck(n) {
-    signal input in;
-    signal output {maxbit} out;
+    input signal in;
+    output signal {maxbit} out;
     
     _ <== Num2Bits(n)(in);
 
@@ -104,8 +104,8 @@ template MaxbitCheck(n) {
 
 
 template MaxbitCheckArray(n,m) {
-    signal input in[m];
-    signal output {maxbit} out[m];
+    input signal in[m];
+    output signal {maxbit} out[m];
 
     out.maxbit = n;
 
@@ -128,8 +128,8 @@ template MaxbitCheckArray(n,m) {
 */
 
 template MaxValueCheck(ct){
-    signal input in;
-    signal output {maxvalue} out;
+    input signal in;
+    output signal {maxvalue} out;
 
     signal res <== CompConstant(ct)(Num2Bits(254)(in));
     res === 0;
@@ -145,8 +145,8 @@ template MaxValueCheck(ct){
 */
 
 template MinValueCheck(ct){
-    signal input in;
-    signal output {minvalue} out;
+    input signal in;
+    output signal {minvalue} out;
 
     signal res <== CompConstant(ct-1)(Num2Bits(254)(in));
     res === 1;
@@ -163,8 +163,8 @@ template MinValueCheck(ct){
 */
 
 template MinMaxValueCheck(ct1,ct2){
-    signal input in;
-    signal output {minvalue,maxvalue} out;
+    input signal in;
+    output signal {minvalue,maxvalue} out;
     
     signal inb[254] <== Num2Bits(254)(in);
     signal res1 <== CompConstant(ct1-1)(inb);
@@ -189,8 +189,8 @@ template MinMaxValueCheck(ct1,ct2){
 */
 
 template MaxAbsValueTagCheck(n){
-    signal input in;
-    signal output {max_abs} out;
+    input signal in;
+    output signal {max_abs} out;
     
     var needed_bits = nbits(2 * n);
     

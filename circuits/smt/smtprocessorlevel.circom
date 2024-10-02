@@ -43,16 +43,16 @@ include "smtbuses.circom";
 
 
 template SMTProcessorLevel() {
-    SMTProcessorState input st; 
+    input SMTProcessorState st; 
 
-    signal output oldRoot;
-    signal output newRoot;
-    signal input sibling;
-    signal input old1leaf;
-    signal input new1leaf;
-    signal input {binary} newlrbit;
-    signal input oldChild;
-    signal input newChild;
+    output signal oldRoot;
+    output signal newRoot;
+    input signal sibling;
+    input signal old1leaf;
+    input signal new1leaf;
+    input signal {binary} newlrbit;
+    input signal oldChild;
+    input signal newChild;
 
     signal aux[4];
 

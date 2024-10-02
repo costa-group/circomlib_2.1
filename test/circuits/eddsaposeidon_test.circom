@@ -5,13 +5,13 @@ include "../../circuits/tags-managing.circom";
 include "../../circuits/babyjub.circom";
 
 template A(){
-    signal input enabled;
-    Point input A; // point in Edwards representation
+    input signal enabled;
+    input Point A; // point in Edwards representation
 
-    signal input S;
-    Point input R8; // point in Edwards representation
+    input signal S;
+    input Point R8; // point in Edwards representation
 
-    signal input M; // mesage 
+    input signal M; // mesage 
     
     signal enabled_aux <== BinaryCheck()(enabled);
     Point A_aux <== BabyCheck()(A);

@@ -4,8 +4,8 @@ include "../../circuits/escalarmul/escalarmul.circom";
 include "../../circuits/tags-managing.circom";
 
 template Main() {
-    signal input in[256];
-    Point output {babyedwards} pout;
+    input signal in[256];
+    output Point {babyedwards} pout;
     
     signal {binary} aux_in[256] <== BinaryCheckArray(256)(in);
     var i;

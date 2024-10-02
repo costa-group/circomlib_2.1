@@ -78,9 +78,9 @@ include "../buses.circom";
 
 template EscalarMulWindow(base, k) {
 
-    Point input {babyedwards} pin;
-    signal input {binary} sel[4];
-    Point output {babyedwards} pout;
+    input Point {babyedwards} pin;
+    input signal {binary} sel[4];
+    output Point {babyedwards} pout;
 
     var table[16][2];
     component mux;
@@ -143,9 +143,9 @@ template EscalarMulWindow(base, k) {
  */
 
 template EscalarMul(n, base) {
-    signal input {binary} in[n];
-    Point input {babyedwards} pin;   // Point input to be added
-    Point output {babyedwards} pout;
+    input signal {binary} in[n];
+    input Point {babyedwards} pin;   // Point input to be added
+    output Point {babyedwards} pout;
 
     var nBlocks = ((n-1)>>2)+1;
     var i;

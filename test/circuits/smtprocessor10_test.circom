@@ -5,16 +5,16 @@ include "../../circuits/tags-managing.circom";
 
 
 template Main() {
-    signal input oldRoot;
-    signal input siblings[10];
-    signal input oldKey;
-    signal input oldValue;
-    signal input isOld0;
-    signal input newKey;
-    signal input newValue;
-    signal input fnc[2];
+    input signal oldRoot;
+    input signal siblings[10];
+    input signal oldKey;
+    input signal oldValue;
+    input signal isOld0;
+    input signal newKey;
+    input signal newValue;
+    input signal fnc[2];
     
-    signal output newRoot;
+    output signal newRoot;
 
     newRoot <== SMTProcessor(10)(oldRoot, siblings, oldKey, oldValue, BinaryCheck()(isOld0), newKey, newValue, BinaryCheckArray(2)(fnc));
 

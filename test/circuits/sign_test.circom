@@ -4,10 +4,10 @@ include "../../circuits/comparators.circom";
 include "../../circuits/tags-managing.circom";
 
 template A(){
-    signal input in[254];
+    input signal in[254];
     component sign = Sign();
     sign.in <== BinaryCheckArray(254)(in);
-    signal output {binary} out <== sign.sign;
+    output signal {binary} out <== sign.sign;
 
 }
 

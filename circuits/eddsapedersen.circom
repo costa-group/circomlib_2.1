@@ -43,15 +43,15 @@ include "escalarmul/escalarmulfix.circom";
 
 
 template EdDSAPedersenVerifier(n) {
-    signal input {binary} msg[n];
+    input signal {binary} msg[n];
 
-    BinaryPoint(254) input A;
-    BinaryPoint(254) input R8;
-    signal input {binary} S[254];
-
+    input BinaryPoint(254) A;
+    input BinaryPoint(254) R8;
+    input BinaryPoint(254) S;
+    
     Point pA;
-
     Point pR8;
+
 
     var i;
 
@@ -59,39 +59,33 @@ template EdDSAPedersenVerifier(n) {
 
     component  compConstant = CompConstant(2736030358979909402780800718157159386076813972158567259200215660948447373040);
 
-    S ==> compConstant.in;
+    S.binY ==> compConstant.in;
     compConstant.out === 0;
-    //S[254] === 0; // TODO: removed these two extra bits
-    //S[255] === 0;
+    S.signX === 0;
 
 // Convert A to Field elements (And verify A)
+    pA <== Bits2Point_Strict()(A);
 
-    component bits2pointA = Bits2Point_Strict();
-
-    bits2pointA.in <== A;
-    pA <== bits2pointA.pout;
 
 // Convert R8 to Field elements (And verify R8)
-
-    component bits2pointR8 = Bits2Point_Strict();
-
-    bits2pointR8.in <== R8;
-    pR8 <== bits2pointR8.pout;
+    pR8 <== Bits2Point_Strict()(R8);
 
 // Calculate the h = H(R,A, msg)
 
-    component hash = Pedersen(512+n);
+    component hash = Pedersen(510+n);
 
     for (i=0; i<254; i++) {
         hash.in[i] <== R8.binY[i];
-        hash.in[256+i] <== A.binY[i];
     }
-    hash.in[254] <== 0; // TODO: changes because use of buses, podemos no añadirlo?
-    hash.in[255] <== R8.signX;
-    hash.in[254 + 256] <== 0; // TODO: changes because use of buses
-    hash.in[255 + 256] <== A.signX;
+    hash.in[254] <== R8.signX;
+    
+    for (i=0; i<254; i++) {
+        hash.in[255 + i] <== A.binY[i];
+    }
+    hash.in[509] <== A.signX;
+    
     for (i=0; i<n; i++) {
-        hash.in[512+i] <== msg[i];
+        hash.in[510+i] <== msg[i];
     }
 
     component point2bitsH = Point2Bits_Strict();
@@ -113,14 +107,13 @@ template EdDSAPedersenVerifier(n) {
     isZero.in <== dbl3.pin.x;
     isZero.out === 0;
 
-    component mulAny = EscalarMulAny(256);
+    component mulAny = EscalarMulAny(255);
     for (i=0; i<254; i++) {
         mulAny.e[i] <== point2bitsH.out.binY[i];
     }
-    mulAny.e[254] <== 0; // TODO: changes because use of buses, podemos no añadirlo?
-    mulAny.e[255] <== point2bitsH.out.signX;
+    mulAny.e[254] <== point2bitsH.out.signX;
+    
     mulAny.pin <== dbl3.pout;
-
 
 // Compute the right side: right =  R8 + right2
 
@@ -134,14 +127,14 @@ template EdDSAPedersenVerifier(n) {
         5299619240641551281634865583518297030282874472190772894086521144482721001553,
         16950150798460657717958625567821834550301663161624707787222815936182638968203
     ];
-    component mulFix = EscalarMulFix(256, BASE8);
+    component mulFix = EscalarMulFix(255, BASE8);
     for (i=0; i<254; i++) {
-        mulFix.e[i] <== S[i];
+        mulFix.e[i] <== S.binY[i];
     }
-    mulFix.e[254] <== 0;
-    mulFix.e[255] <== 0;
+    mulFix.e[254] <== S.signX;
 
 // Do the comparation left == right
 
     mulFix.pout === addRight.pout;
 }
+

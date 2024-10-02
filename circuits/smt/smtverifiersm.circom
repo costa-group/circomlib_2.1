@@ -63,13 +63,13 @@ The end of the last level will have to be `na`
 
 
 template SMTVerifierSM() {
-    signal input {binary} is0;
-    signal input {binary} levIns;
-    signal input {binary} fnc;
+    input signal {binary} is0;
+    input signal {binary} levIns;
+    input signal {binary} fnc;
 
-    SMTVerifierState input prev;
+    input SMTVerifierState prev;
 
-    SMTVerifierState output st;
+    output SMTVerifierState st;
 
     signal prev_top_lev_ins;
     signal prev_top_lev_ins_fnc;

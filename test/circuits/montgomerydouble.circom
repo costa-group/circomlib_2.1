@@ -3,8 +3,8 @@ pragma circom 2.1.5;
 include "../../circuits/montgomery.circom";
 
 template Main(){
-    Point input a;
-    Point output out;
+    input Point a;
+    output Point out;
     out <== MontgomeryDouble()(MontgomeryBabyCheck()(a));
 }
 

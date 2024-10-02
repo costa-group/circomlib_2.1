@@ -44,9 +44,9 @@ pragma circom 2.1.5;
  */
 
 template MultiMux4(n) {
-    signal input c[n][16];  // Constants
-    signal input {binary} s[4];   // Selector
-    signal output out[n];
+    input signal c[n][16];  // Constants
+    input signal {binary} s[4];   // Selector
+    output signal out[n];
 
     signal a3210[n];
     signal a321[n];
@@ -130,9 +130,9 @@ template MultiMux4(n) {
 
 template Mux4() {
     var i;
-    signal input c[16];  // Constants
-    signal input {binary} s[4];   // Selector
-    signal output out;
+    input signal c[16];  // Constants
+    input signal {binary} s[4];   // Selector
+    output signal out;
 
     component mux = MultiMux4(1);
 

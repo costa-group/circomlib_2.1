@@ -53,8 +53,8 @@ pragma circom 2.1.5;
 
 
 template BinSub(n) {
-    signal input {binary} in[2][n];
-    signal output {binary} out[n];
+    input signal {binary} in[2][n];
+    output signal {binary} out[n];
 
     signal aux;
 

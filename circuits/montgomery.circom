@@ -73,8 +73,8 @@ include "buses.circom";
 */
 
 template Edwards2Montgomery() {
-    Point input {babyedwards} pin;
-    Point output {babymontgomery} pout;
+    input Point {babyedwards} pin;
+    output Point {babymontgomery} pout;
 
     pout.x <-- (1 + pin.y) / (1 - pin.y);
     pout.y <-- pout.x / pin.x;
@@ -98,8 +98,8 @@ template Edwards2Montgomery() {
  */
 
 template Montgomery2Edwards() {
-    Point input {babymontgomery} pin;
-    Point output {babyedwards} pout;
+    input Point {babymontgomery} pin;
+    output Point {babyedwards} pout;
 
     pout.x <-- pin.x / pin.y;
     pout.y <-- (pin.x - 1) / (pin.x + 1);
@@ -132,8 +132,8 @@ template Montgomery2Edwards() {
 */
 
 template MontgomeryAdd() {
-    Point input {babymontgomery} pin1, pin2;
-    Point output {babymontgomery} pout;
+    input Point {babymontgomery} pin1, pin2;
+    output Point {babymontgomery} pout;
 
     var A = 168698;
     var B = 1;
@@ -173,8 +173,8 @@ template MontgomeryAdd() {
  */
  
 template MontgomeryDouble() {
-    Point input {babymontgomery} pin;
-    Point output {babymontgomery} pout;
+    input Point {babymontgomery} pin;
+    output Point {babymontgomery} pout;
 
     var A = 168698;
     var B = 1;
@@ -194,8 +194,8 @@ template MontgomeryDouble() {
 
 
 template MontgomeryBabyCheck(){
-    Point input pin;
-    Point output {babymontgomery} pout;
+    input Point pin;
+    output Point {babymontgomery} pout;
     
     var A = 168698;
     

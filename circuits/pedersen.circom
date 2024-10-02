@@ -43,10 +43,10 @@ include "buses.circom";
  */
 
 template Window4() {
-    signal input {binary} in[4];
-    Point input {babymontgomery} base;
-    Point output {babymontgomery} pout;
-    Point output {babymontgomery} pout8;   // Returns 8*Base (To be linked)
+    input signal {binary} in[4];
+    input Point {babymontgomery} base;
+    output Point {babymontgomery} pout;
+    output Point {babymontgomery} pout8;   // Returns 8*Base (To be linked)
 
     component mux = MultiMux3(2);
 
@@ -126,9 +126,9 @@ template Window4() {
 
 
 template Segment(nWindows) {
-    signal input {binary} in[nWindows*4];
-    Point input {babyedwards} base;
-    Point output {babyedwards} pout;
+    input signal {binary} in[nWindows*4];
+    input Point {babyedwards} base;
+    output Point {babyedwards} pout;
 
     var i;
     var j;
@@ -189,8 +189,8 @@ template Segment(nWindows) {
  */
 
 template Pedersen(n) {
-    signal input {binary} in[n];
-    Point output {babyedwards} pout;
+    input signal {binary} in[n];
+    output Point {babyedwards} pout;
 
     var BASE[10][2] = [
         [10457101036533406547632367118273992217979173478358440826365724437999023779287,19824078218392094440610104313265183977899662750282163392862422243483260492317],
@@ -215,6 +215,8 @@ template Pedersen(n) {
     var nBits;
     var nWindows;
     Point {babyedwards} aux[nSegments];
+    
+    signal {binary} aux_0 <== 0;
     for (i=0; i<nSegments; i++) {
         nBits = (i == (nSegments-1)) ? n - (nSegments-1)*200 : 200;
         nWindows = ((nBits - 1)\4)+1;
@@ -227,7 +229,7 @@ template Pedersen(n) {
         }
         // Fill padding bits
         for (j = nBits; j < nWindows*4; j++) {
-            segments[i].in[j] <== 0;
+            segments[i].in[j] <== aux_0;
         }
     }
 

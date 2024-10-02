@@ -140,15 +140,15 @@ include "smtprocessorsm.circom";
 include "smthash_poseidon.circom";
 
 template SMTProcessor(nLevels) {
-    signal input oldRoot;
-    signal output newRoot;
-    signal input siblings[nLevels];
-    signal input oldKey;
-    signal input oldValue;
-    signal input {binary} isOld0;
-    signal input newKey;
-    signal input newValue;
-    signal input {binary} fnc[2];
+    input signal oldRoot;
+    output signal newRoot;
+    input signal siblings[nLevels];
+    input signal oldKey;
+    input signal oldValue;
+    input signal {binary} isOld0;
+    input signal newKey;
+    input signal newValue;
+    input signal {binary} fnc[2];
 
     signal {binary} enabled;
 
