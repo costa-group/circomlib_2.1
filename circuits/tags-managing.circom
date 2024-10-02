@@ -177,18 +177,18 @@ template MinMaxValueCheck(ct1,ct2){
 }
 
 /*
-*** AddMaxAbsValueTag(n): template that adds the constraints needed to ensure that the absolute value of a signal is smaller or equal than a given value n and adds the tag max_abs = n to the input
+*** MaxAbsValueTagCheck(n): template that adds the constraints needed to ensure that the absolute value of a signal is smaller or equal than a given value n and adds the tag max_abs = n to the input
         - Inputs: in -> field value
         - Output: out -> same value as in, but including max_abs tag with out.max_abs = n
                          satisfies tag out.max_abs = n
          
-    Example: AddMaxValueTag(15)(-14) = 14 and can be satisfied
+    Example: MaxValueTagCheck(15)(-14) = 14 and can be satisfied
     Note: in case the input in does not satisfy the specification of max_abs then the generated system of constraints does not have any solution for that input. 
-          For instance, AddMaxAbsValueTag(33)(-100) -> no solution
+          For instance, MaxAbsValueTagCheck(33)(-100) -> no solution
           
 */
 
-template AddMaxAbsValueTag(n){
+template MaxAbsValueTagCheck(n){
     signal input in;
     signal output {max_abs} out;
     
