@@ -35,6 +35,17 @@ include "buses.circom";
           
 */
 
+function nbits(a) {
+    var n = 1;
+    var r = 0;
+    while (n-1<a) {
+        r++;
+        n *= 2;
+    }
+    return r;
+}
+
+
 template Num2Bits(n) {
     input signal in;
     output signal {binary} out[n];
