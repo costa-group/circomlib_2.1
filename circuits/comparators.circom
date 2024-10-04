@@ -292,11 +292,10 @@ template CompConstant(ct) {
     out <== num2bits.out[127];
 }
 
-template CompConstant_new(ct) {
-    var n = maxbits();
+template CompConstant_new(n,ct) {
+    assert(n <= nbits(ct));
     input signal {binary} in[n];
     output signal {binary} out;
-
 
     signal {binary} res[n];
     if (ct & 1 == 0) {
