@@ -20,13 +20,14 @@ pragma circom 2.1.5;
 
 include "comparators.circom";
 include "buses.circom";
+include "bitify.circom";
 
-// The templates and functions of this file only work for prime field bn128 (21888242871839275222246405745257275088548364400416034343698204186575808495617)
+// The templates and functions of this file only work for any prime field
 
 
 /*
-*** AliasCheck(): template that receives an input in representing a value in binary using 254 bits and checks that the value belongs to the prime field (that is, if in represents the value x in binary, then the template checks that x <= p-1)
-        - Inputs: in[254] -> array of 254 bits
+*** AliasCheck(): template that receives an input in representing a value in binary using maxbits() bits and checks that the value belongs to the prime field (that is, if in represents the value x in binary, then the template checks that x <= p-1)
+        - Inputs: in[maxbits()] -> array of maxbits() bits
                                    requires tag binary
         - Outputs: None
          
@@ -37,7 +38,7 @@ include "buses.circom";
 
 template AliasCheck() {
 
-    input signal {binary} in[254];
+    input signal {binary} in[maxbits()];
 
     component  compConstant = CompConstant(-1);
 

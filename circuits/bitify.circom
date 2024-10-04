@@ -23,6 +23,58 @@ include "aliascheck.circom";
 include "buses.circom";
 
 
+// The templates and functions of this file only work for any prime field
+
+/*
+*** maxbits(): function that returns the number of bits that we use to represent the prime generating the field
+        - Inputs: None
+        - Outputs: number of bits that we use to represent the field
+        
+    
+    Example: if we consider the prime p = 11, then maxbits() = 4 
+*/
+
+function maxbits(){
+    var n = 1;
+    var r = 1;
+    while(2 * n > n){
+        n = n * 2;
+        r = r + 1;
+    }
+    return r + 1;
+}
+
+
+/*
+*** nbits(x): function that returns the number of bits that we need to represent the value x
+        - Inputs: x -> field value 
+        - Output: number of bits needed to represent x
+        
+    Example: nbits(7) = 3, nbits(10) = 4
+
+*/
+
+function nbits(a) {
+    if (a == 0){
+       return 1;
+    }
+    else{
+        var n = 1;
+        var r = 0;
+    
+        while (n-1<a) {
+            r++;
+            n *= 2;
+        }
+        if (n < 0){ // in case n > p \ 2 -> we need maxbits()
+            return(maxbits()); 
+        } else{
+            return r;
+        }
+    }
+}
+
+
 /*
 *** Num2Bits(n): template that transforms an input into its binary representation using n bits
         - Inputs: in -> field value
@@ -34,17 +86,6 @@ include "buses.circom";
           For instance, Num2Bits(3)(10) -> no solution
           
 */
-
-function nbits(a) {
-    var n = 1;
-    var r = 0;
-    while (n-1<a) {
-        r++;
-        n *= 2;
-    }
-    return r;
-}
-
 
 template Num2Bits(n) {
     input signal in;
@@ -74,11 +115,14 @@ template Num2Bits(n) {
 */
 
 template Num2Bits_strict() {
+    
+    var max_nbits = maxbits();
+    
     input signal in;
-    output signal {binary} out[254];
+    output signal {binary} out[max_nbits];
 
     component aliasCheck = AliasCheck();
-    component n2b = Num2Bits(254);
+    component n2b = Num2Bits(max_nbits);
     in ==> n2b.in;
 
     n2b.out ==> out;
@@ -126,16 +170,19 @@ template Bits2Num(n) {
 */
 
 template Bits2Num_strict() {
-    input signal {binary} in[254];
+
+    var max_nbits = maxbits();
+
+    input signal {binary} in[max_nbits];
     output signal {maxbit} out;
 
-    component aliasCheck = AliasCheck();
-    component b2n = Bits2Num(254);
+    component aliasCheck = AliasCheck(); // Maybe remove?
+    component b2n = Bits2Num(max_nbits);
     
     in ==> b2n.in;
     in ==> aliasCheck.in;
 
-    out.maxbit = 254;
+    out.maxbit = max_nbits;
     b2n.out ==> out;
 }
 

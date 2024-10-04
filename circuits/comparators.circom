@@ -23,6 +23,8 @@ include "binsum.circom";
 include "gates.circom";
 include "buses.circom";
 
+// The templates and functions of this file only work for any prime field
+
 
 /*
 *** IsZero(): template that receives an input in representing a field value and returns 1 if the input value is zero, 0 otherwise.
@@ -107,7 +109,7 @@ template ForceEqualIfEnabled() {
 */
 
 template LessThan(n) {
-    assert(n <= 252);
+    assert(n <= maxbits()-2);
     input signal {maxbit} in[2];
     output signal {binary} out;
     
@@ -204,8 +206,8 @@ template GreaterEqThan(n) {
 
 
 /*
-*** Sign(): template that receives an input in representing a value in binary using 254 bits and checks if the value is positive or negative. We consider a number positive in case in <= p \ 2 and negative otherwise 
-        - Inputs: in[254] -> array of 254 bits
+*** Sign(): template that receives an input in representing a value in binary using maxbits() bits and checks if the value is positive or negative. We consider a number positive in case in <= p \ 2 and negative otherwise 
+        - Inputs: in[maxbits()] -> array of maxbits() bits
                              requires tag binary
         - Outputs: sign -> 0 in case in <= prime \ 2, 1 otherwise
                            satisfies tag binary
@@ -214,10 +216,10 @@ template GreaterEqThan(n) {
 */
 
 template Sign() {
-    input signal {binary} in[254];
+    input signal {binary} in[maxbits()];
     output signal {binary} sign;
 
-    component comp = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
+    component comp = CompConstant(- 1 \ 2);
 
     var i;
     
@@ -229,8 +231,8 @@ template Sign() {
 
 
 /*
-*** CompConstant(ct): template that receives an input in representing a value in binary using 254 bits and checks if its value is greater than the constant value ct given as a parameter
-        - Inputs: in[254] -> array of 254 bits
+*** CompConstant(ct): template that receives an input in representing a value in binary using maxbits() bits and checks if its value is greater than the constant value ct given as a parameter
+        - Inputs: in[maxbits()] -> array of maxbits() bits
                              requires tag binary
         - Outputs: out -> binary value, out = in > ct
                           satisfies tag binary
@@ -291,7 +293,7 @@ template CompConstant(ct) {
 }
 
 template CompConstant_new(ct) {
-    var n = nbits(-1);
+    var n = maxbits();
     input signal {binary} in[n];
     output signal {binary} out;
 
