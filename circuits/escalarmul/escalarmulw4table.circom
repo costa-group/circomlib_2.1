@@ -18,6 +18,10 @@
 */
 pragma circom 2.1.5;
 
+// The templates and functions of this file only work for finite field F_p = bn128,
+// with the prime number p = 21888242871839275222246405745257275088548364400416034343698204186575808495617.
+
+
 function pointAdd(x1,y1,x2,y2) {
     var a = 168700;
     var d = 168696;

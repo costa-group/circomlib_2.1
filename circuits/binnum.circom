@@ -18,15 +18,9 @@
 */
 pragma circom 2.1.5;
 
-//include "comparators.circom";
-//include "aliascheck.circom";
-//include "buses.circom";
-
-include "bits.circom";
-
-bus BinaryNumber(n){
-    signal output {binary} bits[n];
-}
+include "aliascheck.circom";
+include "buses.circom";
+include "bitify.circom";
 
 /*
 *** Num2Bin(n): template that transforms an input into its binary representation using n bits
@@ -54,8 +48,8 @@ template Num2Bin(n) {
     }
     lc1 === in;
     
-    component aliasCheck = AliasCheck();
-    if (n == nbits(-1)) {
+    if (n == maxbits()) {
+       component aliasCheck = AliasCheck();
        aliasCheck.in <== out.bits;
     }
 }
@@ -119,8 +113,9 @@ template Num2BinNeg(n) {
     in ==> isZero.in;
     lc1 + isZero.out * 2**n === 2**n - in;
 
-    component aliasCheck = AliasCheck();
-    if (n == nbits(-1)) {
+
+    if (n == maxbits()) {
+       component aliasCheck = AliasCheck();
        aliasCheck.in <== out.bits;
     }
 

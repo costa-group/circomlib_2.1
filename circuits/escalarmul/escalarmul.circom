@@ -25,6 +25,9 @@ include "../babyjub.circom";
 include "../buses.circom";
 
 
+// The templates and functions of this file only work for finite field F_p = bn128,
+// with the prime number p = 21888242871839275222246405745257275088548364400416034343698204186575808495617.
+
 
 /*
 *** EscalarMulWindow(base, k): template that receives two inputs in[2]  and a sel[4] representing a value of the prime field and a binary value respectively, and returns the point out according to the scheme below. This circuit is used in order to multiply a curve of the BabyJub curve by a escalar (val * base with base in the curve). The parameter k indicates the number of window in the protocol 

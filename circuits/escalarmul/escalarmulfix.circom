@@ -24,6 +24,9 @@ include "../babyjub.circom";
 include "../buses.circom";
 
 
+// The templates and functions of this file only work for finite field F_p = bn128,
+// with the prime number p = 21888242871839275222246405745257275088548364400416034343698204186575808495617.
+
 /*
 
     The scalar is s = a0 + a1*2^3 + a2*2^6 + ...... + a81*2^243
