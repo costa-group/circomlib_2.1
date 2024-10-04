@@ -295,20 +295,21 @@ template CompConstant_new(ct) {
     input signal {binary} in[n];
     output signal {binary} out;
 
-    signal res[n];
-    if ct & 1 == 0 {
+
+    signal {binary} res[n];
+    if (ct & 1 == 0) {
         res[0] <== in[0];
     } else {
         res[0] <== 0;
     }
     for (var i=1; i < n; i++) {
-    // re[i-1] says if in[0..i-1] > ct[0..i-1] 
-        if ((ct >> i) & 1) == 0 {
+        // re[i-1] says if in[0..i-1] > ct[0..i-1] (upto bit i-1)
+        if ((ct >> i) & 1 == 0) {
             res[i] <== OR()(res[i-1],in[i]);
-        else {
+        } else {
             res[i] <== AND()(res[i-1],in[i]);
 	}
     }
     out <== res[n-1];
-}
+}    
 
