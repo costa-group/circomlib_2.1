@@ -126,7 +126,7 @@ template Bits2Point_Strict() {
     component aliasCheckX = AliasCheck();
     aliasCheckX.in <== n2bX.out;
 
-    component signCalc = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
+    component signCalc = CompConstant(maxbits(), 10944121435919637611123202872628637544274182200208017171849102093287904247808);
     signCalc.in <== n2bX.out;
 
     signCalc.out === in.signX;
@@ -162,7 +162,7 @@ template Point2Bits_Strict() {
     aliasCheckX.in <== n2bX.out;
     aliasCheckY.in <== n2bY.out;
 
-    component signCalc = CompConstant(10944121435919637611123202872628637544274182200208017171849102093287904247808);
+    component signCalc = CompConstant(maxbits(), 10944121435919637611123202872628637544274182200208017171849102093287904247808);
     signCalc.in <== n2bX.out;
 
     out.binY <== n2bY.out;

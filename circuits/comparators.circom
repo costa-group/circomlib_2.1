@@ -219,7 +219,7 @@ template Sign() {
     input signal {binary} in[maxbits()];
     output signal {binary} sign;
 
-    component comp = CompConstant(- 1 \ 2);
+    component comp = CompConstant(maxbits(), - 1 \ 2);
 
     var i;
     
@@ -243,6 +243,7 @@ template Sign() {
 */
 
 template CompConstant(n,ct) {
+    log(nbits(ct));
     assert(nbits(ct) <= n);
     input signal {binary} in[n];
     output signal {binary} out;

@@ -58,7 +58,7 @@ template EdDSAPoseidonVerifier() {
     component snum2bits = Num2Bits(253);
     snum2bits.in <== S;
 
-    component  compConstant = CompConstant(2736030358979909402780800718157159386076813972158567259200215660948447373040);
+    component  compConstant = CompConstant(maxbits(), 2736030358979909402780800718157159386076813972158567259200215660948447373040);
 
     for (i=0; i<253; i++) {
         snum2bits.out[i] ==> compConstant.in[i];

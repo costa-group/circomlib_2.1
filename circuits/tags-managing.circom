@@ -131,7 +131,7 @@ template MaxValueCheck(ct){
     input signal in;
     output signal {maxvalue} out;
 
-    signal res <== CompConstant(ct)(Num2Bits(254)(in));
+    signal res <== CompConstant(nbits(ct), ct)(Num2Bits(nbits(ct))(in));
     res === 0;
     out.maxvalue = ct;
     out <== in;
@@ -148,7 +148,7 @@ template MinValueCheck(ct){
     input signal in;
     output signal {minvalue} out;
 
-    signal res <== CompConstant(ct-1)(Num2Bits(254)(in));
+    signal res <== CompConstant(maxbits(), ct-1)(Num2Bits(maxbits())(in));
     res === 1;
     out.minvalue = ct;
     out <== in;
@@ -165,12 +165,14 @@ template MinValueCheck(ct){
 template MinMaxValueCheck(ct1,ct2){
     input signal in;
     output signal {minvalue,maxvalue} out;
+
+    var n = nbits(ct2);
     
-    signal inb[254] <== Num2Bits(254)(in);
-    signal res1 <== CompConstant(ct1-1)(inb);
+    signal inb[n] <== Num2Bits(n)(in);
+    signal res1 <== CompConstant(n, ct1-1)(inb);
     res1 === 1;
     out.minvalue = ct1;
-    signal res2 <== CompConstant(ct2)(inb);
+    signal res2 <== CompConstant(n, ct2)(inb);
     res2 === 0;    
     out.maxvalue = ct2;
     out <== in;

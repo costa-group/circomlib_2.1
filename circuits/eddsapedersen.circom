@@ -57,7 +57,7 @@ template EdDSAPedersenVerifier(n) {
 
 // Ensure S<Subgroup Order
 
-    component  compConstant = CompConstant(2736030358979909402780800718157159386076813972158567259200215660948447373040);
+    component  compConstant = CompConstant(maxbits(), 2736030358979909402780800718157159386076813972158567259200215660948447373040);
 
     S.binY ==> compConstant.in;
     compConstant.out === 0;

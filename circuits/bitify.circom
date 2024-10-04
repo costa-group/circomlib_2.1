@@ -57,20 +57,21 @@ function maxbits(){
 function nbits(a) {
     if (a == 0){
        return 1;
-    }
-    else{
+    } else if (a < 0){ // in case a > p \ 2 -> we need maxbits()
+       return(maxbits()); 
+    } else{
         var n = 1;
         var r = 0;
     
-        while (n-1<a) {
+        while (n-1<a && n >= 0) {
             r++;
             n *= 2;
+            log(n);
         }
-        if (n < 0){ // in case n > p \ 2 -> we need maxbits()
-            return(maxbits()); 
-        } else{
-            return r;
+        if (n-1 < 0){
+            return maxbits();
         }
+        return r;
     }
 }
 

@@ -40,7 +40,7 @@ template AliasCheck() {
 
     input signal {binary} in[maxbits()];
 
-    component  compConstant = CompConstant(-1);
+    component  compConstant = CompConstant(maxbits(), -1);
 
     compConstant.in <== in;
 
